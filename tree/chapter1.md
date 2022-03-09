@@ -76,3 +76,5 @@ Patroni 使用 Postgres 的流式复制，默认情况下是异步的。 Patroni
 •任何cgroup限制（可能与上述相关）<br>
 •kill-9 postgres进程（postmaster除外！）。这是一个不错的故障模拟。<br>
 您不应该做的一件事是在postmaster进程上运行kill-9。这是因为这样做不会模仿任何现实场景。如果您担心您的基础设施不安全，并且攻击者可能会运行kill-9，那么再多的HA进程也无法修复这一问题。攻击者只需再次杀死进程，或以另一种方式造成混乱。<br>
+
+[patroni-doccn](https://github.com/postgres-cn/patroni-doccn/blob/main/README.md)
