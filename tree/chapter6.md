@@ -17,8 +17,8 @@
 • PATRONI_LOG_LOGGERS：重新定义每个python 模块的日志记录级别。 示例 PATRONI_LOG_LOGGERS="{patroni.postmaster: WARNING, urllib3: DEBUG}"<br>
 <b>6.3 引导配置</b><br>
 可以在新集群成功初始化后立即创建新的数据库用户。 此过程由以下变量定义：<br>
-• PATRONI_<username>_PASSWORD=’<password>’<br>
-• PATRONI_<username>_OPTIONS=’list,of,options’<br>
+• PATRONI_&lt;username&gt;_PASSWORD=’&lt;password&gt;’<br>
+• PATRONI_&lt;username&gt;_OPTIONS=’list,of,options’<br>
 示例：定义 PATRONI_admin_PASSWORD=strongpasswd 和 PATRONI_admin_OPTIONS='createrole,createdb' 将导致使用密码 strongpasswd 创建用户 admin，允许创建其他用户和数据库。<br>
 <b>6.4 Consul</b><br>
 • PATRONI_CONSUL_HOST：Consul 本地代理的主机：端口。 <br>
