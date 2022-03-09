@@ -1,4 +1,4 @@
-<font size="48"><b>第15章贡献指南</b></font><br>
+# 第15章 贡献指南<br>
 想为 Patroni 做出贡献吗？是的 - 这就是方法！<br>
 <b>15.1互动</b><br>
 只想与其他 Patroni 用户聊天？正在寻找交互式故障排除帮助？在[PostgreSQL Slack](https://postgres-slack.herokuapp.com/)频道#patroni 上加入我们。<br>
@@ -33,3 +33,5 @@ DCS=raft python -m behave
 4. 提交拉取请求。<br>
 您将尽快获得有关您的拉取请求的反馈。<br>
 快乐的 Patroni 黑客 ;-)
+
+[patroni-doccn](https://github.com/postgres-cn/patroni-doccn/blob/main/README.md)
