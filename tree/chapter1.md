@@ -1,4 +1,4 @@
-<font size="48"><b>第1章 介绍</b></font><br>
+# 第1章 介绍<br>
 Patroni起源于Governor在Compose的项目一个分支，它包括许多新功能。<br>
 有关使用Patroni基于Docker的部署示例，请参阅目前在Zalando使用的Spilo。有关其他背景信息，请参见：<br>
 •PostgreSQL HA与Kubernetes和Patroni，Josh Berkus在KubeCon 2016年的演讲（视频）<br>
