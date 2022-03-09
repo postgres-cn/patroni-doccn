@@ -1,0 +1,35 @@
+<font size="48"><b>第15章贡献指南</b></font><br>
+想为 Patroni 做出贡献吗？是的 - 这就是方法！<br>
+<b>15.1互动</b><br>
+只想与其他 Patroni 用户聊天？正在寻找交互式故障排除帮助？在[PostgreSQL Slack](https://postgres-slack.herokuapp.com/)频道#patroni 上加入我们。<br>
+<b>15.2运行测试</b><br>
+运行行为测试的要求：<br>
+1. 需要安装 PostgreSQL 包。<br>
+2. PostgreSQL 二进制文件必须在您的PATH 中可用。您可能需要使用类似PATH=/usr/lib/postgresql/11/bin:$PATH python -m 行为的内容将它们添加到路径中。<br>
+3. 如果您想使用外部 DCS（例如 Etcd、Consul 和 Zookeeper）进行测试，您将需要安装软件包和运行相应的服务，并在 localhost 和默认端口上接受未加密/未受保护的连接。在 Etcd 或 Consul 的情况下，如果二进制文件在PATH中可用，行为测试套件可以启动它们。<br>
+安装依赖：<br>
+<table border="1"><tr><th align="left">
+# You may want to use Virtualenv or specify pip3.<br>
+pip install -r requirements.txt<br>
+pip install -r requirements.dev.txt
+</th></tr></table><br>
+安装所有依赖项后，您可以运行各种测试套件：<br>
+<table border="1"><tr><th align="left">
+# You may want to use Virtualenv or specify python3.<br>
+# Run flake8 to check syntax and formatting:<br>
+python setup.py flake8<br>
+# Run the pytest suite in tests/:<br>
+python setup.py test<br>
+# Run the behave (https://behave.readthedocs.io/en/latest/) test suite in features/;<br>
+# modify DCS as desired (raft has no dependencies so is the easiest to start with):<br>
+DCS=raft python -m behave
+</th></tr></table><br>
+<b>15.3 报告问题</b><br>
+如果您有关于patroni的问题或在使用它时遇到问题，请在提交问题之前阅读[自述](https://patroni.readthedocs.io/en/latest/README.html#readme)文件。还要仔细检查我们的[问题跟踪器](https://github.com/zalando/patroni/issues)上的当前问题。<br>
+<b>15.4 贡献拉取请求</b><br>
+1. 提交对相关问题的评论或创建一个描述您提议的更改的新问题。<br>
+2. 做一个 fork，开发和测试你的代码更改。<br>
+3. 包括文档<br>
+4. 提交拉取请求。<br>
+您将尽快获得有关您的拉取请求的反馈。<br>
+快乐的 Patroni 黑客 ;-)
