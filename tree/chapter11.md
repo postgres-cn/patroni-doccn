@@ -1,4 +1,4 @@
-<font size="48"><b>第11章 集群的暂停/恢复模式</b></font><br>
+# 第11章 集群的暂停/恢复模式<br>
 <b>11.1目标</b><br>
 在某些情况下，Patroni 需要暂时退出集群管理，同时仍保留 DCS 中的集群状态。可能的用例是集群上的不常见活动，例如主要版本升级或损坏恢复。在这些活动中，节点经常因为 Patroni 不知道的原因启动和停止，一些节点甚至可以临时提升，违反了只运行一个主节点的假设。因此，Patroni 需要能够与正在运行的集群“分离”，在 Pacemaker 中实现等效的维护模式。<br>
 <b>11.2实施</b><br>
@@ -12,3 +12,5 @@
 <b>11.3用户指南</b><br>
 patronictl支持pause和resume命令。<br>
 还可以使用 {"pause": true/false/null}键发送 PATCH请求到 {namespace}/{cluster}/config <br>
+
+[patroni-doccn](https://github.com/postgres-cn/patroni-doccn/blob/main/README.md)
