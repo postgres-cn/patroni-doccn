@@ -1,4 +1,4 @@
-<font size="48"><b>第13章 WatchDog支持</b></font><br>
+# 第13章 WatchDog支持<br>
 将多个 PostgreSQL 服务器作为主服务器运行可能会因时间线不同而导致事务丢失。这种情况也称为脑裂问题。为了避免裂脑，Patroni 需要确保 PostgreSQL 在 DCS 中的leader键过期后不会接受任何事务提交。在正常情况下，当leader锁更新因任何原因失败时，Patroni 会尝试通过停止 PostgreSQL 来实现这一点。但是，由于各种原因，这可能不会发生：<br>
 •Patroni 因错误、内存不足或被系统管理员意外杀死而崩溃。<br>
 •关闭 PostgreSQL 太慢了。<br>
@@ -16,3 +16,5 @@ modprobe softdog<br>
 chown postgres /dev/watchdog<br>
 对于测试，通过向modprobe命令行添加soft_noboot=1来禁用重新启动可能会有所帮助。在这种情况下，watchdog 只会在内核环形缓冲区中记录一行，通过dmesg可见。<br>
 成功启用后，Patroni 将记录有关WatchDog的信息。<br>
+
+[patroni-doccn](https://github.com/postgres-cn/patroni-doccn/blob/main/README.md)
