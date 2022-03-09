@@ -1,4 +1,4 @@
-<font size="48"><b>第6章  环境配置设置</b></font><br>
+# 第6章  环境配置设置<br>
 可以使用系统环境变量覆盖 Patroni 配置文件中定义的一些配置参数。 本文档列出了 Patroni 处理的所有环境变量。 通过这些变量设置的值始终优先于在 Patroni 配置文件中设置的值。<br>
 <b>6.1 全局/通用</b><br>
 • PATRONI_CONFIGURATION：可以通过PATRONI_CONFIGURATION 环境变量为Patroni 设置整个配置。 在这种情况下，不会考虑任何其他环境变量！<br>
@@ -142,3 +142,5 @@ Etcdv3 的环境名称与 Etcd 类似，您只需要在变量名称中使用 ETC
 • PATRONI_CTL_CACERT：指定带有 CA_BUNDLE 文件的文件或带有可信 CA 证书的目录，以在验证 REST API SSL 证书时使用。如果没有提供，pavictl 将使用为 REST API“cafile”参数提供的值。<br>
 • PATRONI_CTL_CERTFILE：指定具有 PEM 格式的客户端证书的文件。如果没有提供，pavictl 将使用为 REST API“certfile”参数提供的值。<br>
 • PATRONI_CTL_KEYFILE：指定具有 PEM 格式的客户端密钥的文件。如果没有提供，pavictl 将使用为 REST API “keyfile”参数提供的值。<br>
+
+[patroni-doccn](https://github.com/postgres-cn/patroni-doccn/blob/main/README.md)
