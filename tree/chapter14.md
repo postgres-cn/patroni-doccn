@@ -1,4 +1,4 @@
-<font size="48"><b>第14章 发行说明</b></font><br>
+# 第14章 发行说明<br>
 <b>14.1 Version 2.1.1</b><br>
 新功能<br>
 支持 ETCD SRV 名称后缀 (David Pavlicek)<br>
@@ -253,7 +253,6 @@ Patronictl 的改进<br>
 标记是为每个节点单独配置的，没有简单的方法可以获得它们的概述。<br>
 • 提高成员产出（Alexander）<br>
 冗余集群名称不再显示在每一行上，只显示在表头中。<br>
- 
 • 如果明确指定了配置文件但未找到，则失败（Kaarel Moppel）<br>
 以前，patronictl只报告DEBUG消息。<br>
 • 解决了未初始化K8s Pod破坏的问题patronictl（Alexander）<br>
@@ -337,7 +336,6 @@ Patenti通过http协议与Concur、Etcd和Kubernetes API进行通信。拥有一
 它没有用于任何重要的用途，但在发布新版本的urllib3时会引起很多问题。<br>
 • 改进处理etcd.hosts作为逗号分隔字符串而不是YAML数组写入（Igor）<br>
 以前，以格式host1:port1,host2:port2（逗号后的空格字符）编写时失败。<br>
-
 可用性改进<br>
 • 不强迫用户从patronictl的空列表中选择成员（Igor）<br>
 如果用户提供了错误的集群名称，我们将引发异常，而不是要求从空列表中选择成员。<br>
@@ -678,7 +676,6 @@ Kubernetes支持改进<br>
 在此之前，它使用的是feature/k8s，这已经过时了。<br>
 • 添加适当的RBAC以在k8s上运行patroni（Maciej）<br>
 添加分配给集群POD的服务帐户、仅持有必要权限的角色以及连接服务帐户和角色的rolebinding。<br>
-
 <b>14.24 Version 1.4.1</b><br>
 修复patronictl<br>
 • 在要故障切换到的成员，建议列表中不显示当前的leader。(Alexander Kukushkin)<br>
@@ -862,7 +859,6 @@ PostgreSQL 相关的小改进<br>
 - 实现启动状态和主启动超时。（Ants, Alexander)<br>
     以前`pg_ctl`等待超时，然后高兴地考虑考虑运行 PostgreSQL。这导致 PostgreSQL 在列表中显示为正在运行，而实际上并没有运行，并导致竞争条件，从而导致故障转移或崩溃恢复，或因故障转移和错过倒带而中断的崩溃恢复。此更改添加了一个`master_start_timeout`参数并为主 HA 循环引入了一个新状态：`starting`。当`master_start_timeout`是 0 时，一旦有故障转移候选者，当主节点崩溃时，我们将立即进行故障转移。否则，Patroni 将在超时期间尝试在 master 上启动 PostgreSQL 后等待；当它到期时，它会在可能的情况下进行故障转移。即使在超时到期之前，手动故障转移请求也将在主服务器崩溃期间得到满足。<br>
     将`timeout`参数引入`restart`API 端点和`patronictl`. 当它被设置并且重启时间超过超时时间时，PostgreSQL 被认为是不健康的，其他节点有资格获得领导者锁。<br>
-
 - 修复`pg_rewind`暂停模式下的行为。(Ants)<br>
     当 Patroni 认为它需要倒带但无法倒带（即`pg_rewind`不存在）时，避免在暂停模式下不必要的重新启动。如果 pg_rewind相关用户配置部分中缺少超级用户身份验证，则返回超级用户（默认操作系统用户）的默认libpq值。<br>
 - 序列化回调执行。当新的回调即将运行时，杀死前一个相同类型的回调。修复运行回调时产生僵尸进程的问题。(Alexander)<br>
@@ -1027,3 +1023,5 @@ Patronictl、API 和 DCS 改进<br>
 - 添加具有behave验收测试，以检查运行 Patroni的真实场景。（Alexander、Oleksii）<br>
     可以使用behave命令手动启动测试。它们也会针对拉取请求和提交后自动启动。<br>
 可以在[项目的 github 页面](https://github.com/zalando/patroni/releases)上找到一些旧版本的发行说明。<br>
+
+[patroni-doccn](https://github.com/postgres-cn/patroni-doccn/blob/main/README.md)
