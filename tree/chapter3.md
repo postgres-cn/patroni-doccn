@@ -298,3 +298,5 @@ POST /reload 调用将命令 Patroni 重新读取和应用配置文件。 这相
 POST /reinitialize：重新初始化指定节点上的PostgreSQL数据目录。只允许在副本上执行它。 一旦调用，它将删除数据目录并启动pg_basebackup或其他替代副本创建方法。<br>
 如果 Patroni 处于尝试恢复（重新启动）故障的 Postgres 的循环中，则调用可能会失败。 为了解决这个问题，可以在请求正文中指定 {"force":true}。<br>
 重新初始化端点由patriotictl reinit 使用。<br>
+
+[patroni-doccn](https://github.com/postgres-cn/patroni-doccn/blob/main/README.md)
