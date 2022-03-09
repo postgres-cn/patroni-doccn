@@ -71,7 +71,7 @@ ignore_slots:<br>
 • urllib3：DEBUG<br>
 <b>7.4 引导配置</b><br>
 • bootstrap：<br>
-&nbsp;&nbsp;-dcs：在初始化一个集群后，将配置信息写入给定的配置存储 /<namespace>/<scope>/config 中。集群的全局动态配置。在 bootstrap.dcs 中可以设置动态配置中描述的任何参数，在用户初始化（引导）新集群后，它将把这个部分写入配置存储的/<namespace>/<scope>/config。所有以后的bootstrap.dcs 不会有任何效果！如果要更改它们，请使用patronictl edit-config或Patroni REST API<br>
+&nbsp;&nbsp;-dcs：在初始化一个集群后，将配置信息写入给定的配置存储 /&lt;namespace&gt;/&lt;scope&gt;/config 中。集群的全局动态配置。在 bootstrap.dcs 中可以设置动态配置中描述的任何参数，在用户初始化（引导）新集群后，它将把这个部分写入配置存储的/&lt;namespace&gt;/&lt;scope&gt;/config。所有以后的bootstrap.dcs 不会有任何效果！如果要更改它们，请使用patronictl edit-config或Patroni REST API<br>
 &nbsp;&nbsp;-method：用于引导此集群的自定义脚本。有关详细信息，请参阅自定义引导程序方法文档。initdb指定何时恢复为默认initdb命令。initdb当method 配置文件中没有参数时也会触发。<br>
 &nbsp;&nbsp;-initdb：列出要传递给 initdb 的选项。<br>
 &nbsp;&nbsp;&nbsp;&nbsp;--data-checksums: 在9.3版本时使用pg_rewind，需要打开。<br>
