@@ -1,4 +1,4 @@
-<font size="48"><b>第9章 复制镜像和引导</b></font><br>
+# 第9章 复制镜像和引导<br>
 Patroni允许自定义创建新副本。它还支持定义在引导新的空群集时发生的情况。两者之间的区别已明确定义：只有在集群的DCS中存在初始化键时，Patroni才会创建副本。如果没有初始化键-Patroni将在拥有初初始化键锁定的第一个节点上专门调用引导程序。<br>
 <b>9.1 引导</b><br>
 PostgreSQL 提供了 initdb 命令来初始化一个新的集群，Patroni 默认调用它。 在某些情况下，特别是在创建新集群作为现有集群的副本时，有必要用自定义操作替换内置方法。 Patroni 支持执行用户定义的脚本来引导新集群，为它们提供一些必需的参数，即集群的名称和数据目录的路径。 bootstrap的配置是Patroni的配置中的一部分。 例如：<br>
@@ -108,3 +108,5 @@ bootstrap:<br>
 要配置这样的集群，您需要在Patroni配置中指定standby_cluster 部分：<br>
 请注意，这些选项在集群引导期间只会应用一次，之后更改它们的唯一方法是通过 DCS。<br>
 如果在备集群上使用复制槽，还必须在主集群上创建对应的复制槽。 备用集群实施不会自动完成。 您可以在主集群上使用 Patroni 的永久复制槽功能
+
+[patroni-doccn](https://github.com/postgres-cn/patroni-doccn/blob/main/README.md)
