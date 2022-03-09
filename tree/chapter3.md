@@ -3,18 +3,18 @@ Patroni具有丰富的REST API，Patronictl自身在领导者竞赛中使用了p
 <b>3.1 健康检查端点</b><br>
 对于所有运行状况检查，GET请求Patroni返回一个JSON文档以及该节点的状态以及HTTP状态代码。如果您不需要或不需要JSON文档，则可以考虑使用OPTIONS方法而不是GET。<br>
 • 仅当Patroni节点作为领导者运行时，对Patroni REST API的以下请求将返回HTTP状态代码200：<br>
-  –GET/<br>
-  –GET/master<br>
-  –GET/primary<br>
-  –GET/read-write<br>
+&nbsp;&nbsp;–GET/<br>
+&nbsp;&nbsp;–GET/master<br>
+&nbsp;&nbsp;–GET/primary<br>
+&nbsp;&nbsp;–GET/read-write<br>
 • GET /standby-leader：仅当Patroni 节点在备用集群中作为leader 运行时才返回HTTP 状态代码200。<br>
 • GET /leader：当Patroni 节点有leader 锁时，返回HTTP 状态码200。 与前两个端点的主要区别在于它没有考虑 PostgreSQL 是作为主服务器还是作为后备领导者运行。<br>
 • GET /replica: replica健康检查端点。 仅当Patroni节点处于running状态，角色为replica且未设置noloadbalance标签时，才返回HTTP状态码200。<br>
 • GET /replica?lag=<max-lag>：replica检查端点。 除了从replica检查外，它还检查复制延迟并仅在低于指定值时返回状态代码 200。 出于性能原因，来自 DCS 的关键 cluster.last_leader_operation 用于 Leader wal 位置和replica上的计算延迟。 max-lag 可以以字节（整数）或人类可读的值指定，例如 16kB、64MB、1GB。<br>
-	– GET /replica?lag=1048576 <br>
-	– GET /replica?lag=1024kB <br>
-	– GET /replica?lag=10MB <br>
-	– GET /replica?lag=1GB<br>
+&nbsp;&nbsp;– GET /replica?lag=1048576 <br>
+&nbsp;&nbsp;– GET /replica?lag=1024kB <br>
+&nbsp;&nbsp;– GET /replica?lag=10MB <br>
+&nbsp;&nbsp;– GET /replica?lag=1GB<br>
 • GET /replica?tag_key1=value1&tag_key2=value2：replica检查端点。 此外，它还将在 yaml 的标签部分检查用户定义的标签 key1 和 key2 及其各自的值 配置管理。 如果没有为实例定义标签，或者 yaml 配置中的值与查询值不匹配，它将返回 HTTP 状态代码 503。<br>
 在以下请求中，由于我们正在检查leader或standby-leader的状态，因此 Patroni 不会应用任何用户定义的标签，它们将被忽略。<br>
 • GET /?tag_key1=value1&tag_key2=value2 <br>
@@ -28,121 +28,121 @@ Patroni具有丰富的REST API，Patronictl自身在领导者竞赛中使用了p
 • GET /synchronous 或GET /sync：仅当Patroni 节点作为同步备用节点运行时才返回HTTP 状态代码200。<br>
 • GET /asynchronous 或 GET /async：仅当 Patroni 节点作为异步备用节点运行时才返回 HTTP 状态代码 200<br>
 • GET /asynchronous?lag=<max-lag> 或 GET /async?lag=<max-lag>：异步待机 检查端点。 除了检查异步或异步之外，它还检查复制延迟并仅在低于指定值时返回状态代码 200。 出于性能原因，来自 DCS 的关键 cluster.last_leader_operation 用于 Leader wal 位置和replica上的计算延迟。 max-lag 可以以字节（整数）或人类可读的值指定，例如 16KB、64MB、1GB。<br>
-	– GET /async?lag=1048576 <br>
-	– GET /async?lag=1024kB<br>
-	– GET /async?lag=10MB <br>
-	– GET /async?lag=1GB<br>
+&nbsp;&nbsp;– GET /async?lag=1048576 <br>
+&nbsp;&nbsp;– GET /async?lag=1024kB<br>
+&nbsp;&nbsp;– GET /async?lag=10MB <br>
+&nbsp;&nbsp;– GET /async?lag=1GB<br>
 • GET /health：仅当PostgreSQL 启动并运行时才返回HTTP 状态代码200。<br>
 • GET /liveness：始终返回 HTTP 状态代码 200，它仅表示 Patroni 正在运行。 可用于 livenessProbe。<br>
 • GET /readiness：当Patroni 节点作为领导者运行或PostgreSQL 启动并运行时，返回HTTP 状态代码200。 当无法使用 Kubernetes 端点进行领导选举 (OpenShift) 时，端点可用于 readinessProbe。<br>
 readiness 和liveness 端点是非常轻量的不需要执行SQL。 探针的配置方式应使其在引导密钥到期时的某个时间开始失效。默认值ttl为30秒，示例探针如下所示：<br>
 <table width="500" border="1"><tr><th align="left" >
 readinessProbe: <br>
-	httpGet: <br>
-		scheme: HTTP <br>
-		path: /readiness <br>
-		port: 8008 <br>
-	initialDelaySeconds: 3 <br>
-	periodSeconds: 10 <br>
-	timeoutSeconds: 5 <br>
-	successThreshold: 1 <br>
-	failureThreshold: 3 <br>
+&nbsp;&nbsp;httpGet: <br>
+&nbsp;&nbsp;&nbsp;&nbsp;scheme: HTTP <br>
+&nbsp;&nbsp;&nbsp;&nbsp;path: /readiness <br>
+&nbsp;&nbsp;&nbsp;&nbsp;port: 8008 <br>
+&nbsp;&nbsp;initialDelaySeconds: 3 <br>
+&nbsp;&nbsp;periodSeconds: 10 <br>
+&nbsp;&nbsp;timeoutSeconds: 5 <br>
+&nbsp;&nbsp;successThreshold: 1 <br>
+&nbsp;&nbsp;failureThreshold: 3 <br>
 livenessProbe: <br>
-	httpGet: <br>
-		scheme: HTTP <br>
-		path: /liveness <br>
-		port: 8008 <br>
-	initialDelaySeconds: 3 <br>
-	periodSeconds: 10 <br>
-	timeoutSeconds: 5 <br>
-	successThreshold: 1 <br>
-	failureThreshold: 3<br>
+&nbsp;&nbsp;httpGet: <br>
+&nbsp;&nbsp;&nbsp;&nbsp;scheme: HTTP <br>
+&nbsp;&nbsp;&nbsp;&nbsp;path: /liveness <br>
+&nbsp;&nbsp;&nbsp;&nbsp;port: 8008 <br>
+&nbsp;&nbsp;initialDelaySeconds: 3 <br>
+&nbsp;&nbsp;periodSeconds: 10 <br>
+&nbsp;&nbsp;timeoutSeconds: 5 <br>
+&nbsp;&nbsp;successThreshold: 1 <br>
+&nbsp;&nbsp;failureThreshold: 3<br>
 </th></tr></table><br>
 <b>3.2 监控端点</b><br>
 GET /patroni 由 Patroni 在leader选举期间使用。 您的监控系统也可以使用它。此端点生成的 JSON 文档与健康检查端点生成的 JSON 具有相同的结构。<br>
 <table width="500" border="1"><tr><th align="left" >
 $ curl -s http://localhost:8008/patroni | jq . <br>
 {<br>
-	"state": "running",<br>
-	"postmaster_start_time": "2019-09-24 09:22:32.555 CEST",<br>
-	"role": "master",<br>
-	"server_version": 110005,<br>
-	"cluster_unlocked": false,<br>
-	"xlog": {<br>
-		"location": 25624640<br>
-	},<br>
-	"timeline": 3,<br>
-	"database_system_identifier": "6739877027151648096",<br>
-	"patroni": {<br>
-		"version": "1.6.0",<br>
-		"scope": "batman"<br>
-	}<br>
+&nbsp;&nbsp;"state": "running",<br>
+&nbsp;&nbsp;"postmaster_start_time": "2019-09-24 09:22:32.555 CEST",<br>
+&nbsp;&nbsp;"role": "master",<br>
+&nbsp;&nbsp;"server_version": 110005,<br>
+&nbsp;&nbsp;"cluster_unlocked": false,<br>
+&nbsp;&nbsp;"xlog": {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"location": 25624640<br>
+&nbsp;&nbsp;},<br>
+&nbsp;&nbsp;"timeline": 3,<br>
+&nbsp;&nbsp;"database_system_identifier": "6739877027151648096",<br>
+&nbsp;&nbsp;"patroni": {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"version": "1.6.0",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"scope": "batman"<br>
+&nbsp;&nbsp;}<br>
 }<br>
 </th></tr></table><br>
 <b>3.3 集群状态端点</b><br>
 • GET /cluster 端点生成描述当前集群拓扑和状态的 JSON 文档：<br>
 <table width="500" border="1"><tr><th align="left" >
 $ curl -s http://localhost:8008/cluster | jq .{<br>
-		"members": [{<br>
-			"name": "postgresql0", <br>
-			"host": "127.0.0.1", <br>
-			"port": 5432, <br>
-			"role": "leader", <br>
-			"state": "running", <br>
-			"api_url": "http://127.0.0.1:8008/patroni", <br>
-			"timeline": 5, <br>
-			"tags": { <br>
-				"clonefrom": true <br>
-			} <br>
-		}, <br>
-		{ <br>
-			"name": "postgresql1", <br>
-			"host": "127.0.0.1", <br>
-			"port": 5433, <br>
-			"role": "replica",<br> 
-			"state": "running", <br>
-			"api_url": "http://127.0.0.1:8009/patroni", <br>
-			"timeline": 5, <br>
-			"tags": { <br>
-				"clonefrom": true <br>
-			},<br>
-			"lag": 0 <br>
-		} <br>
-	], <br>
-	"scheduled_switchover": { <br>
-		"at": "2019-09-24T10:36:00+02:00", <br>
-		"from": "postgresql0" <br>
-	} <br>
+&nbsp;&nbsp;&nbsp;&nbsp;"members": [{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"name": "postgresql0", <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"host": "127.0.0.1", <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"port": 5432, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"role": "leader", <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"state": "running", <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"api_url": "http://127.0.0.1:8008/patroni", <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"timeline": 5, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"tags": { <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"clonefrom": true <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} <br>
+&nbsp;&nbsp;&nbsp;&nbsp;}, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"name": "postgresql1", <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"host": "127.0.0.1", <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"port": 5433, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"role": "replica",<br> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"state": "running", <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"api_url": "http://127.0.0.1:8009/patroni", <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"timeline": 5, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"tags": { <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"clonefrom": true <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;},<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"lag": 0 <br>
+&nbsp;&nbsp;&nbsp;&nbsp;} <br>
+&nbsp;&nbsp;], <br>
+&nbsp;&nbsp;"scheduled_switchover": { <br>
+&nbsp;&nbsp;&nbsp;&nbsp;"at": "2019-09-24T10:36:00+02:00", <br>
+&nbsp;&nbsp;&nbsp;&nbsp;"from": "postgresql0" <br>
+&nbsp;&nbsp;} <br>
 }
 </th></tr></table><br>
 • GET /history 端点提供了有关集群切换/故障切换历史的视图。 格式与 pg_wal 目录中的历史文件的内容非常相似。唯一的区别是显示新时间线创建时间的时间戳字段。<br>
 <table width="500" border="1"><tr><th align="left" >
 $ curl -s http://localhost:8008/history | jq . <br>
 [ <br>
-	[ <br>
-		1, <br>
-		25623960, <br>
-		"no recovery target specified", <br>
-		"2019-09-23T16:57:57+02:00" <br>
-	], <br>
-	[ <br>
-		2, <br>
-		25624344, <br>
-		"no recovery target specified", <br>
-		"2019-09-24T09:22:33+02:00" <br>
-	], <br>
-	[ <br>
-		3, <br>
-		25624752, <br>
-		"no recovery target specified",<br>
-		"2019-09-24T09:26:15+02:00"<br>
-	], <br>
-	[ <br>
-		4, <br>
-		50331856, <br>
-		"no recovery target specified", <br>
-		"2019-09-24T09:35:52+02:00"<br>
-	] <br>
+&nbsp;&nbsp;[ <br>
+&nbsp;&nbsp;&nbsp;&nbsp;1, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;25623960, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;"no recovery target specified", <br>
+&nbsp;&nbsp;&nbsp;&nbsp;"2019-09-23T16:57:57+02:00" <br>
+&nbsp;&nbsp;], <br>
+&nbsp;&nbsp;[ <br>
+&nbsp;&nbsp;&nbsp;&nbsp;2, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;25624344, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;"no recovery target specified", <br>
+&nbsp;&nbsp;&nbsp;&nbsp;"2019-09-24T09:22:33+02:00" <br>
+&nbsp;&nbsp;], <br>
+&nbsp;&nbsp;[ <br>
+&nbsp;&nbsp;&nbsp;&nbsp;3, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;25624752, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;"no recovery target specified",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"2019-09-24T09:26:15+02:00"<br>
+&nbsp;&nbsp;], <br>
+&nbsp;&nbsp;[ <br>
+&nbsp;&nbsp;&nbsp;&nbsp;4, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;50331856, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;"no recovery target specified", <br>
+&nbsp;&nbsp;&nbsp;&nbsp;"2019-09-24T09:35:52+02:00"<br>
+&nbsp;&nbsp;] <br>
 ]
 </th></tr></table><br>
 <b>3.4配置端点</b><br>
@@ -150,22 +150,22 @@ GET /config：获取动态配置的当前版本：<br>
 <table width="500" border="1"><tr><th align="left" >
 $ curl -s localhost:8008/config | jq .<br>
 {<br>
-	"ttl": 30,<br>
-	"loop_wait": 10,<br>
-	"retry_timeout": 10,<br>
-	"maximum_lag_on_failover": 1048576,<br>
-	"postgresql": {<br>
-		"use_slots": true,<br>
-		"use_pg_rewind": true,<br>
-		"parameters": {<br>
-			"hot_standby": "on",<br>
-			"wal_log_hints": "on",<br>
-			"wal_level": "hot_standby",<br>
-			"max_wal_senders": 5,<br>
-			"max_replication_slots": 5,<br>
-			"max_connections": "100"<br>
-		}<br>
-	}<br>
+&nbsp;&nbsp;"ttl": 30,<br>
+&nbsp;&nbsp;"loop_wait": 10,<br>
+&nbsp;&nbsp;"retry_timeout": 10,<br>
+&nbsp;&nbsp;"maximum_lag_on_failover": 1048576,<br>
+&nbsp;&nbsp;"postgresql": {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"use_slots": true,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"use_pg_rewind": true,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"parameters": {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"hot_standby": "on",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"wal_log_hints": "on",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"wal_level": "hot_standby",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"max_wal_senders": 5,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"max_replication_slots": 5,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"max_connections": "100"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;}<br>
 }
 </th></tr></table><br>
 PATCH /config：更改现有配置。<br>
@@ -175,40 +175,40 @@ $ curl -s -XPATCH -d \<br>
 ˓→}' \<br>
 http://localhost:8008/config | jq .<br>
 {<br>
-	"ttl": 20,<br>
-	"loop_wait": 5,<br>
-	"maximum_lag_on_failover": 1048576,<br>
-	"retry_timeout": 10,<br>
-	"postgresql": {<br>
-		"use_slots": true,<br>
-		"use_pg_rewind": true,<br>
-		"parameters": {<br>
-			"hot_standby": "on",<br>
-			"wal_log_hints": "on",<br>
-			"wal_level": "hot_standby",<br>
-			"max_wal_senders": 5,<br>
-			"max_replication_slots": 5,<br>
-			"max_connections": "101"<br>
-		}<br>
-	}<br>
+&nbsp;&nbsp;"ttl": 20,<br>
+&nbsp;&nbsp;"loop_wait": 5,<br>
+&nbsp;&nbsp;"maximum_lag_on_failover": 1048576,<br>
+&nbsp;&nbsp;"retry_timeout": 10,<br>
+&nbsp;&nbsp;"postgresql": {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"use_slots": true,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"use_pg_rewind": true,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"parameters": {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"hot_standby": "on",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"wal_log_hints": "on",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"wal_level": "hot_standby",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"max_wal_senders": 5,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"max_replication_slots": 5,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"max_connections": "101"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;}<br>
 }
 </th></tr></table><br>
 上面的REST API调用修补了现有配置，并返回了新配置。让我们检查节点是否处理了此配置。 首先，它应该每 5 秒开始打印日志行（loop_wait=5）。 “max_connections”的改变需要重启，因此应显示“pending_restart”标志：<br>
 <table width="500" border="1"><tr><th align="left" >
 $ curl -s http://localhost:8008/patroni | jq .{<br>
-	"pending_restart": true,<br>
-	"database_system_identifier": "6287881213849985952",<br>
-	"postmaster_start_time": "2016-06-13 13:13:05.211 CEST",<br>
-	"xlog": {<br>
-		"location": 2197818976<br>
-	},<br>
-	"patroni": {<br>
-		"scope": "batman",<br>
-		"version": "1.0"<br>
-	},<br>
-	"state": "running",<br>
-	"role": "master",<br>
-	"server_version": 90503<br>
+&nbsp;&nbsp;"pending_restart": true,<br>
+&nbsp;&nbsp;"database_system_identifier": "6287881213849985952",<br>
+&nbsp;&nbsp;"postmaster_start_time": "2016-06-13 13:13:05.211 CEST",<br>
+&nbsp;&nbsp;"xlog": {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"location": 2197818976<br>
+&nbsp;&nbsp;},<br>
+&nbsp;&nbsp;"patroni": {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"scope": "batman",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"version": "1.0"<br>
+&nbsp;&nbsp;},<br>
+&nbsp;&nbsp;"state": "running",<br>
+&nbsp;&nbsp;"role": "master",<br>
+&nbsp;&nbsp;"server_version": 90503<br>
 }
 </th></tr></table><br>
 删除参数：<br>
@@ -218,22 +218,22 @@ $ curl -s -XPATCH -d \<br>
 	'{"postgresql":{"parameters":{"max_connections":null}}}' \<br>
 http://localhost:8008/config | jq .<br>
 {<br>
-	"ttl": 20,<br>
-	"loop_wait": 5,<br>
-	"retry_timeout": 10,<br>
-	"maximum_lag_on_failover": 1048576,<br>
-	"postgresql": {<br>
-		"use_slots": true,<br>
-		"use_pg_rewind": true,<br>
-		"parameters": {<br>
-			"hot_standby": "on",<br>
-			"unix_socket_directories": ".",<br>
-			"wal_level": "hot_standby",<br>
-			"wal_log_hints": "on",<br>
-			"max_wal_senders": 5,<br>
-			"max_replication_slots": 5<br>
-		}<br>
-	}<br>
+&nbsp;&nbsp;"ttl": 20,<br>
+&nbsp;&nbsp;"loop_wait": 5,<br>
+&nbsp;&nbsp;"retry_timeout": 10,<br>
+&nbsp;&nbsp;"maximum_lag_on_failover": 1048576,<br>
+&nbsp;&nbsp;"postgresql": {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"use_slots": true,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"use_pg_rewind": true,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"parameters": {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"hot_standby": "on",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"unix_socket_directories": ".",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"wal_level": "hot_standby",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"wal_log_hints": "on",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"max_wal_senders": 5,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"max_replication_slots": 5<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;}<br>
 }
 </th></tr></table><br>
 上面的调用从动态配置中删除 postgresql.parameters.max_connections.PUT /config: 也可以无条件地执行现有动态配置的完全重写：<br>
@@ -245,21 +245,21 @@ $ curl -s -XPUT -d \<br>
 ˓→"loop_wait":3,"ttl":20}' \<br>
 http://localhost:8008/config | jq .<br>
 {<br>
-	"ttl": 20,<br>
-	"maximum_lag_on_failover": 1048576,<br>
-	"retry_timeout": 10,<br>
-	"postgresql": {<br>
-		"use_slots": true,<br>
-		"parameters": {<br>
-			"hot_standby": "on",<br>
-			"unix_socket_directories": ".",<br>
-			"wal_level": "hot_standby",<br>
-			"wal_log_hints": "on",<br>
-			"max_wal_senders": 5<br>
-		},<br>
-		"use_pg_rewind": true<br>
-	},<br>
-	"loop_wait": 3<br>
+&nbsp;&nbsp;"ttl": 20,<br>
+&nbsp;&nbsp;"maximum_lag_on_failover": 1048576,<br>
+&nbsp;&nbsp;"retry_timeout": 10,<br>
+&nbsp;&nbsp;"postgresql": {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"use_slots": true,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"parameters": {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"hot_standby": "on",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"unix_socket_directories": ".",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"wal_level": "hot_standby",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"wal_log_hints": "on",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"max_wal_senders": 5<br>
+&nbsp;&nbsp;&nbsp;&nbsp;},<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"use_pg_rewind": true<br>
+&nbsp;&nbsp;},<br>
+&nbsp;&nbsp;"loop_wait": 3<br>
 }
 </th></tr></table><br>
 <b>3.5 切换和故障切换端点</b><br>
@@ -284,11 +284,11 @@ POST /switchover 和POST /failover 端点被分别用于 patronictl switchover �
  DELETE /switchover 用于 patronictl flush <cluster-name> switchover。
 <b>3.6 重启端点</b><br>
 • POST /restart：您可以通过执行 POST /restart 调用在特定节点上重新启动 Postgres。 在 POST 请求的 JSON 正文中，可以选择指定一些重启条件：<br>
-	– restart_pending：布尔值，如果设置为 true Patroni 将仅在重启挂起时重启 PostgreSQL，以便应用 PostgreSQL 配置中的一些更改。<br>
-	– role：只有当节点的当前角色与 POST 请求中的角色匹配时才执行重新启动。<br>
-	– postgres_version：仅当postgres 的当前版本小于POST 请求中指定的版本时才执行重新启动。<br>
-	– timeout：在 PostgreSQL 开始接受连接之前我们应该等待多长时间。 覆盖 master_start_timeout。<br>
-	– schedule：带时区的时间戳，安排在将来某个地方重启。<br>
+&nbsp;&nbsp;– restart_pending：布尔值，如果设置为 true Patroni 将仅在重启挂起时重启 PostgreSQL，以便应用 PostgreSQL 配置中的一些更改。<br>
+&nbsp;&nbsp;– role：只有当节点的当前角色与 POST 请求中的角色匹配时才执行重新启动。<br>
+&nbsp;&nbsp;– postgres_version：仅当postgres 的当前版本小于POST 请求中指定的版本时才执行重新启动。<br>
+&nbsp;&nbsp;– timeout：在 PostgreSQL 开始接受连接之前我们应该等待多长时间。 覆盖 master_start_timeout。<br>
+&nbsp;&nbsp;– schedule：带时区的时间戳，安排在将来某个地方重启。<br>
 • DELETE /restart：删除计划的重启<br>
 POST /restart 和 DELETE /restart 端点分别被patronictl restart 和patronictl flush <cluster-name> restart 使用。<br>
 <b>3.7 重载端点</b><br>
