@@ -1,4 +1,4 @@
-<font size="48"><b>第7章 YAML 配置设置</b></font><br>
+# 第7章 YAML 配置设置<br>
 <b>7.1 动态配置设置</b><br>
 动态配置存储在DCS中(分布式配置存储）并应用到所有集群中的节点上。一些参数，例如像 loop_wait, ttl, postgresql.parameters.max_connections, postgresql.parameters.max_worker_processes 等等仅能通过动态配置被设置。一些其他参数像postgresql.listen, postgresql.data_dir 仅能在本地被设置，如在Patroni配置文件或者通过配置变量。在大多数情况下，本地配置将覆盖动态配置。 为了更改动态配置，您可以使用patronictl edit-config工具或Patroni REST API<br>
 • loop_wait：循环将休眠的秒数。默认值：10<br>
@@ -299,3 +299,5 @@ restapi:<br>
 •key3 : 1.4<br>
 •key4 : "RandomString"<br>
 标签在REST API和用户列表中可见。您还可以使用这些标签检查实例的运行状况。如果没有为实例定义标签，或者如果相应的值与查询值不匹配，它将返回HTTP状态代码503。<br>
+
+[patroni-doccn](https://github.com/postgres-cn/patroni-doccn/blob/main/README.md)
