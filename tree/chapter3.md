@@ -10,7 +10,7 @@ Patroni具有丰富的REST API，Patronictl自身在领导者竞赛中使用了p
 • GET /standby-leader：仅当Patroni 节点在备用集群中作为leader 运行时才返回HTTP 状态代码200。<br>
 • GET /leader：当Patroni 节点有leader 锁时，返回HTTP 状态码200。 与前两个端点的主要区别在于它没有考虑 PostgreSQL 是作为主服务器还是作为后备领导者运行。<br>
 • GET /replica: replica健康检查端点。 仅当Patroni节点处于running状态，角色为replica且未设置noloadbalance标签时，才返回HTTP状态码200。<br>
-• GET /replica?lag=<max-lag>：replica检查端点。 除了从replica检查外，它还检查复制延迟并仅在低于指定值时返回状态代码 200。 出于性能原因，来自 DCS 的关键 cluster.last_leader_operation 用于 Leader wal 位置和replica上的计算延迟。 max-lag 可以以字节（整数）或人类可读的值指定，例如 16kB、64MB、1GB。<br>
+• GET /replica?lag=&lt;max-lag&gt;：replica检查端点。 除了从replica检查外，它还检查复制延迟并仅在低于指定值时返回状态代码 200。 出于性能原因，来自 DCS 的关键 cluster.last_leader_operation 用于 Leader wal 位置和replica上的计算延迟。 max-lag 可以以字节（整数）或人类可读的值指定，例如 16kB、64MB、1GB。<br>
 &nbsp;&nbsp;– GET /replica?lag=1048576 <br>
 &nbsp;&nbsp;– GET /replica?lag=1024kB <br>
 &nbsp;&nbsp;– GET /replica?lag=10MB <br>
