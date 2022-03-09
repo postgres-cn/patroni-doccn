@@ -1,4 +1,4 @@
-<font size="48"><b>第5章 PostgreSQL 大版本升级</b></font><br>
+# 第5章 PostgreSQL 大版本升级<br>
 目前唯一可行的方法是：<br>
 1.停止 Patroni <br>
 2.升级PostgreSQL二进制文件并在master节点上执行pg_upgrade <br>
@@ -13,3 +13,5 @@ PostgreSQL 不支持在备用节点上运行 pg_upgrade。 如果您知道自己
 • 在Patroni 启动过程中，Patroni 抱怨它无法绑定到PostgreSQL 端口。<br>
 您需要验证postgresql.conf中的 listen_addresses 和 port ，以及patroni.yml中的 postgresql.listen 。别忘了 pg_hba.conf 应该允许这样的访问。• 在要求 Patroni 重新启动节点后，PostgreSQL 显示错误信息：could not open configuration file "/etc/postgresql/10/main/pg_hba.conf": No such file or directory<br>
 根据您管理 PostgreSQL 配置的方式，它可能意味着多种含义。 如果您指定 post gresql.config_dir，则 Patroni 仅在引导新集群时根据引导部分中的设置生成 pg_hba.conf。 在这种情况下，PGDATA 不为空，因此没有发生引导程序。 该文件必须事先存在。<br>
+
+[patroni-doccn](https://github.com/postgres-cn/patroni-doccn/blob/main/README.md)
