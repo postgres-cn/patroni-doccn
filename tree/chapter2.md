@@ -1,4 +1,4 @@
-<font size="48"><b>第2章Patroni配置</b></font><br>
+# 第2章Patroni配置<br>
 Patroni配置存储在DCS（分布式配置存储）中。有3种类型的配置：<br>
 <b>•动态配置。</b>这些选项可随时在DCS中设置。如果更改的选项不是启动配置的一部分，则它们将异步（在下一个唤醒周期中）应用于每个节点，然后重新加载。如果节点需要重新启动以应用配置（对于具有context postmaster的选项，如果其值已更改），则会在members.data JSON中设置一个特殊标志pending_restart标记。此外，节点状态还通过显示“restart_pending”：true来表明这一点。<br>
 <b>•本地配置(patroni.yml). </b>这些选项在配置文件中定义，优先于动态配置。可以通过向Patroni进程发送SIGHUP、执行POST/reload REST-API请求或执行patronictl reload.在运行时（无需重新启动Patroni）更改和重新加载Patroni.yml。<br>
