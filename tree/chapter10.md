@@ -1,4 +1,4 @@
-<font size="48"><b>第10章 复制模式</b></font><br>
+# 第10章 复制模式<br>
 Patroni 使用 PostgreSQL 流复制。有关流式复制的更多信息，请参阅Postgres 文档。默认情况下，Patroni 将 PostgreSQL 配置为异步复制。选择复制模式取决于您的业务考虑。调查异步和同步复制以及其他 HA 解决方案，以确定哪种解决方案最适合您。<br>
 <b>10.1异步模式持久性</b><br>
 在异步模式下，集群允许丢失一些已提交的事务以确保可用性。当主服务器由于任何其他原因出现故障或变得不可用时，Patroni 会自动将一个足够健康的备用服务器提升为主服务器。任何尚未复制到该备用数据库的事务都保留在主数据库上的“分叉时间线”中，并且实际上无法恢复[1]。<br>
@@ -33,3 +33,5 @@ Patroni使用参数synchronous_node_count来管理同步备用数据库的数量
 数据仍然存在，但是要恢复数据，需要数据恢复专家进行手动恢复。当允许Patroni使用use_pg_rewind参数进行rewind时，分叉的时间线将被自动删除，并且将失败的主节点重新加入集群。<br>
 [2]<br>
 客户端可以使用 PostgreSQL 的synchronous_commit设置更改每个事务的行为。synchronous_commit值为off和 local的事务可能会在故障转移时丢失，但不会被复制延迟阻塞。<br>
+
+[patroni-doccn](https://github.com/postgres-cn/patroni-doccn/blob/main/README.md)
