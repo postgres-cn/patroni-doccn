@@ -1,5 +1,6 @@
 # patroni-doccn
-patroni中文手册
+patroni中文手册<br/>
+译者：崔鹏 李鑫 孟令彬 李洋 赵文玉<br/>
 
 <a href='https://github.com/postgres-cn/patroni-doccn/blob/main/tree/chapter1.md'>第1章 介绍<a/><br/>
 <a href='https://github.com/postgres-cn/patroni-doccn/blob/main/tree/chapter2.md'>第2章 Patroni配置<a/><br/>
