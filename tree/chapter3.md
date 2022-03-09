@@ -1,4 +1,4 @@
-<font size="48"><b>第3章 Patroni REST API</b></font><br>
+# 第3章 Patroni REST API <br>
 Patroni具有丰富的REST API，Patronictl自身在领导者竞赛中使用了patronictl工具，以执行故障转移/切换/重新初始化/重新启动/重新加载，通过HAProxy或任何其他类型的负载平衡器来执行HTTP健康检查 ，当然也可以用于监视。在下面，您将找到Patroni REST API端点的列表。<br>
 <b>3.1 健康检查端点</b><br>
 对于所有运行状况检查，GET请求Patroni返回一个JSON文档以及该节点的状态以及HTTP状态代码。如果您不需要或不需要JSON文档，则可以考虑使用OPTIONS方法而不是GET。<br>
