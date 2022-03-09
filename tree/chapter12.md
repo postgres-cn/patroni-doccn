@@ -1,4 +1,4 @@
-<font size="48"><b>第12章 将 Patroni 与 Kubernetes 结合使用</b></font><br>
+# 第12章 将 Patroni 与 Kubernetes 结合使用<br>
 Patroni 可以使用 Kubernetes 对象来存储集群状态并管理leader键。这使得它能够在没有任何一致性存储的 Kubernetes 环境中运行 Postgres，即不需要运行额外的 Etcd 部署。Patroni 可以使用两种不同类型的 Kubernetes 对象来存储leader和配置键，它们使用kubernetes.use_endpoints或PATRONI_KUBERNETES_USE_ENDPOINTS 环境变量进行配置。<br>
 <b>12.1使用 Endpoints</b><br>
 尽管这是推荐的模式，但出于兼容性的原因，默认情况下它是关闭的。启用时，Patroni将集群配置和leader键存储在它创建的各个端点的metadata: annotations字段中。更改leader比使用ConfigMaps更安全，因为包含leader 信息的注释和指向正在运行的leader的实际地址都会一次性同时更新。<br>
@@ -15,3 +15,5 @@ Patroni Kubernetes设置 和 环境变量在文档中进行了描述。<br>
 •您可以在Spilo Project 中找到可以使用 Persistent Volumes 的全功能 Docker 镜像 。<br>
 •Helm chart 用于部署使用Kubernetes运行的Patroni配置的Spilo映像。<br>
 •为了使用 Patroni 和 Spilo 大规模运行您的数据库集群，请查看 postgres-operator项目。它实现了操作员模式来管理 Spilo 集群。<br>
+
+[patroni-doccn](https://github.com/postgres-cn/patroni-doccn/blob/main/README.md)
