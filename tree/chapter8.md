@@ -1,4 +1,4 @@
-<font size="48"><b>第8章 安全注意事项</b></font><br>
+# 第8章 安全注意事项<br>
 Patroni 集群有两个接口可以防止未经授权的访问：分布式配置存储 (DCS) 和 Patroni REST API。<br>
 <b>8.1 保护 DCS</b><br>
 Patroni 和patronictl 都向/从DCS 存储和检索数据。 <br>
@@ -14,3 +14,5 @@ Patroni本身会在领导者竞赛期间使用Patroni REST API，通过patronict
 restapi 启用对服务器的TLS客户端身份验证。根据verify_client参数的值，API服务器需要成功地对安全和不安全的API调用（verify_client：required），或者仅对不安全的API调用（verify_client：optional），或者没有API调用（verify_client：none），进行客户端证书验证。<br>
 ctl 部分参数启用对客户端的 TLS 服务器身份验证（使用与patroni相同的配置的patronictl 工具）。 设置 insecure: true 以禁用客户端的服务器证书验证。 有关 TLS 客户端参数的详细说明，请参阅设置。 <br>
 保护 PostgreSQL 数据库免受未经授权的访问超出了本文档的范围，请移步参阅https://www.postgresql.org/docs/current/client-authentication.html<br>
+
+[patroni-doccn](https://github.com/postgres-cn/patroni-doccn/blob/main/README.md)
