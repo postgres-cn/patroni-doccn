@@ -1,4 +1,4 @@
-<font size="48"><b>第4章 将独立设备转换为 Patroni 集群</b></font><br>
+# 第4章 将独立设备转换为 Patroni 集群<br>
 本节介绍将独立的 PostgreSQL 实例转换为 Patroni 集群的过程。 要在不使用预先存在的 PostgreSQL 实例的情况下部署 Patroni 集群，请参阅1.4。<br>
 <b>4.1 步骤</b><br>
 可以使用来自单节点 PostgreSQL 数据库的数据目录启动 Patroni 集群。 这是通过严格遵循以下步骤来实现的：<br>
@@ -12,3 +12,4 @@ CREATE USER $PATRONI_REPLICATION_USERNAME WITH REPLICATION ENCRYPTED PASSWORD '<
 </th></tr></table><br>
 3.启动 Patroni（例如：patroni /etc/patroni/patroni.yml）。 它会自动检测 PostgreSQL 守护进程已经在运行，但其配置可能已过期。<br>
 4.要求 Patroni 重新启动节点，使用patronictl restart cluster-name node-name。 仅当 PostgreSQL 配置已过期时才需要此步骤。<br>
+[patroni-doccn](https://github.com/postgres-cn/patroni-doccn/blob/main/README.md)
