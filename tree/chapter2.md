@@ -48,3 +48,5 @@ Patroni还控制着其他一些Postgres参数：<br>
 • postgresql.use_slots: true<br>
 更改这些选项后，Patroni将读取存储在DCS中的配置的相关部分，并更改其运行时值。<br>
 每次更改配置时，Patroni节点都会将DCS选项的状态转储到磁盘，并将其转储到位于Postgres数据目录中的文件patoni.dynamic.json中。如果DCS中完全没有这些选项或这些选项无效，则仅允许主机从磁盘转储恢复这些选项。<br>
+
+[patroni-doccn](https://github.com/postgres-cn/patroni-doccn/blob/main/README.md)
