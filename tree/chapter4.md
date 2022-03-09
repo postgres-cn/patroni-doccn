@@ -12,4 +12,5 @@ CREATE USER $PATRONI_REPLICATION_USERNAME WITH REPLICATION ENCRYPTED PASSWORD '<
 </th></tr></table><br>
 3.启动 Patroni（例如：patroni /etc/patroni/patroni.yml）。 它会自动检测 PostgreSQL 守护进程已经在运行，但其配置可能已过期。<br>
 4.要求 Patroni 重新启动节点，使用patronictl restart cluster-name node-name。 仅当 PostgreSQL 配置已过期时才需要此步骤。<br>
+
 [patroni-doccn](https://github.com/postgres-cn/patroni-doccn/blob/main/README.md)
