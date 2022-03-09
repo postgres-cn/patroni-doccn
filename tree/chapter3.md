@@ -281,7 +281,7 @@ Switchover scheduled
 根据情况，请求可能会以不同的 HTTP 状态代码和内容结束。 成功完成切换或故障转移后，将返回状态码 200。 如果成功安排了切换，Patroni 将返回 HTTP 状态代码 202。如果出现问题，将在响应正文中返回错误状态代码（400、412 或 503 之一）以及一些详细信息。 更多信息请查看patroni/api.py:do_POST_failover() 方法的源代码。
 • DELETE /switchover：删除计划切换
 POST /switchover 和POST /failover 端点被分别用于 patronictl switchover 和patronictl failover
- DELETE /switchover 用于 patronictl flush <cluster-name> switchover。
+ DELETE /switchover 用于 patronictl flush &lt;cluster-name&gt; switchover。
 <b>3.6 重启端点</b><br>
 • POST /restart：您可以通过执行 POST /restart 调用在特定节点上重新启动 Postgres。 在 POST 请求的 JSON 正文中，可以选择指定一些重启条件：<br>
 &nbsp;&nbsp;– restart_pending：布尔值，如果设置为 true Patroni 将仅在重启挂起时重启 PostgreSQL，以便应用 PostgreSQL 配置中的一些更改。<br>
@@ -290,7 +290,7 @@ POST /switchover 和POST /failover 端点被分别用于 patronictl switchover �
 &nbsp;&nbsp;– timeout：在 PostgreSQL 开始接受连接之前我们应该等待多长时间。 覆盖 master_start_timeout。<br>
 &nbsp;&nbsp;– schedule：带时区的时间戳，安排在将来某个地方重启。<br>
 • DELETE /restart：删除计划的重启<br>
-POST /restart 和 DELETE /restart 端点分别被patronictl restart 和patronictl flush <cluster-name> restart 使用。<br>
+POST /restart 和 DELETE /restart 端点分别被patronictl restart 和patronictl flush &lt;cluster-name&gt; restart 使用。<br>
 <b>3.7 重载端点</b><br>
 POST /reload 调用将命令 Patroni 重新读取和应用配置文件。 这相当于向 Patroni 进程发送 SIGHUP 信号。 如果您更改了一些需要重新启动的 Postgres 参数（如 shared_buffers），您仍然必须通过调用 POST/restart 端点或在patriotictl restart 的帮助下明确地重新启动Postgres。<br>
 重新加载端点由patriotictl reload 使用。<br>
