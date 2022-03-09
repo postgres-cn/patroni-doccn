@@ -12,46 +12,46 @@
 • synchronous_mode : 打开同步复制模式。在这种模式下，将选择一个副本作为同步副本，只有最新的领导者和同步副本才能参与领导人选举。同步模式确保成功提交的事务不会在故障转移时丢失，代价是在用户无法确保事务持久性的情况下失去写入可用性。有关详细信息，请参阅复制模式文档。<br>
 • synchronous_mode_strict：如果没有可用的同步副本，则防止禁用同步复制，从而阻止所有客户端写入主服务器。有关详细信息，请参阅复制模式文档。<br>
 • PostgreSQL：<br>
-  –use_pg_rewind : 是否使用 pg_rewind。默认为false。<br>
-  –use_slots : 是否使用复制槽。在 PostgreSQL 9.4+ 上默认为true。<br>
-  –recovery_conf：配置follower写入recovery.conf 的附加配置设置。PostgreSQL 12 中不再有 recovery.conf，但您可以继续使用此部分，因为 Patroni 透明地处理它。<br>
-  –parameters：Postgres 的配置设置列表。<br>
+&nbsp;&nbsp;–use_pg_rewind : 是否使用 pg_rewind。默认为false。<br>
+&nbsp;&nbsp;–use_slots : 是否使用复制槽。在 PostgreSQL 9.4+ 上默认为true。<br>
+&nbsp;&nbsp;–recovery_conf：配置follower写入recovery.conf 的附加配置设置。PostgreSQL 12 中不再有 recovery.conf，但您可以继续使用此部分，因为 Patroni 透明地处理它。<br>
+&nbsp;&nbsp;–parameters：Postgres 的配置设置列表。<br>
 • Standby_cluster：如果定义了这个部分，我们想要引导一个备用集群。<br>
-	–host : 远程主机的地址<br>
-	–port : 远程主机的端口<br>
-	–primary_slot_name：远程主服务器上用于复制的插槽。此参数是可选的，默认值来自实例名称（请参阅函数slot_name_from_member_name）。<br>
-	–create_replica_methods：可用于从远程主机引导备用leader的有序方法列表可能与PostgreSQL中定义的列表不同。<br>
-	–restore_command：将WAL记录从远程主机还原到备用leader的命令，可以与PostgreSQL中定义的列表不同。<br>
-	–archive_cleanup_command : standby leader的清理命令<br>
-	–recovery_min_apply_delay : 等待多长时间将WAL记录应用到备用leader上<br>
+&nbsp;&nbsp;–host : 远程主机的地址<br>
+&nbsp;&nbsp;–port : 远程主机的端口<br>
+&nbsp;&nbsp;–primary_slot_name：远程主服务器上用于复制的插槽。此参数是可选的，默认值来自实例名称（请参阅函数slot_name_from_member_name）。<br>
+&nbsp;&nbsp;–create_replica_methods：可用于从远程主机引导备用leader的有序方法列表可能与PostgreSQL中定义的列表不同。<br>
+&nbsp;&nbsp;–restore_command：将WAL记录从远程主机还原到备用leader的命令，可以与PostgreSQL中定义的列表不同。<br>
+&nbsp;&nbsp;–archive_cleanup_command : standby leader的清理命令<br>
+&nbsp;&nbsp;–recovery_min_apply_delay : 等待多长时间将WAL记录应用到备用leader上<br>
 • slots：定义永久复制槽。这些插槽将在切换/故障切换期间保留。逻辑槽通过重启从主节点复制到备用节点，之后它们的位置每隔loop_wait秒（如有必要）前进。通过libpq连接并使用倒带或超级用户凭据复制逻辑插槽文件（请参阅postgresql.authentication部分）。副本上的逻辑槽位置总是有可能比以前的主位置稍晚，因此应用程序应该准备好在故障转移后第二次可以接收到一些消息。最简单的方法是跟踪confirmed_flush_lsn。启用永久逻辑复制槽需要postgresql.use_slots进行设置，并且还将自动启用hot_standby_feedback. 由于逻辑复制槽的故障转移在 PostgreSQL 9.6 及更早版本上是不安全的，并且 PostgreSQL 10 版缺少一些重要功能，因此该功能仅适用于 PostgreSQL 11及以上版本。<br>
-	– my_slot_name：复制槽的名称。 如果永久插槽名称与当前主插槽的名称匹配，则不会创建该插槽。操作员有责任确保由Patroni 自动为成员创建的复制槽和永久复制槽之间的名称没有冲突<br>
-		-- type：插槽类型。可能是physical或logical。如果插槽是合乎逻辑的，则必须另外定义database和plugin。<br>
-		-- database：应在其中创建逻辑槽的数据库名称。<br>
-		-- plugin : 逻辑插槽的插件名称。<br>
+&nbsp;&nbsp;– my_slot_name：复制槽的名称。 如果永久插槽名称与当前主插槽的名称匹配，则不会创建该插槽。操作员有责任确保由Patroni 自动为成员创建的复制槽和永久复制槽之间的名称没有冲突<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-- type：插槽类型。可能是physical或logical。如果插槽是合乎逻辑的，则必须另外定义database和plugin。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-- database：应在其中创建逻辑槽的数据库名称。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-- plugin : 逻辑插槽的插件名称。<br>
 • ignore_slots：Patroni 应忽略匹配插槽的复制插槽属性集列表。此配置/功能/等。当某些复制槽在 Patroni 之外管理时非常有用。匹配属性的任何子集都会导致插槽被忽略。<br>
-	– name：复制槽的名称。<br>
-	– type：插槽类型。可以physical或logical。如果插槽是逻辑的，您可以另外定义database和/或plugin.<br>
-	– database：数据库名称（匹配logical插槽时）。<br>
-	– plugin : 逻辑解码插件（匹配logical插槽时）。<br>
+&nbsp;&nbsp;– name：复制槽的名称。<br>
+&nbsp;&nbsp;– type：插槽类型。可以physical或logical。如果插槽是逻辑的，您可以另外定义database和/或plugin.<br>
+&nbsp;&nbsp;– database：数据库名称（匹配logical插槽时）。<br>
+&nbsp;&nbsp;– plugin : 逻辑解码插件（匹配logical插槽时）。<br>
 注意：slots是一个 hashmap 而ignore_slots是一个数组。例如：<br>
 <table border="1"><tr><th align="left">
 slots:<br>
-	permanent_logical_slot_name:<br>
-		type: logical<br>
-		database: my_db<br>
-		plugin: test_decoding<br>
-	permanent_physical_slot_name:<br>
-		type: physical<br>
-	...<br>
+&nbsp;&nbsp;permanent_logical_slot_name:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;type: logical<br>
+&nbsp;&nbsp;&nbsp;&nbsp;database: my_db<br>
+&nbsp;&nbsp;&nbsp;&nbsp;plugin: test_decoding<br>
+&nbsp;&nbsp;permanent_physical_slot_name:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;type: physical<br>
+&nbsp;&nbsp;...<br>
 ignore_slots:<br>
-	- name: ignored_logical_slot_name<br>
-		type: logical<br>
-		database: my_db<br>
-		plugin: test_decoding<br>
-	- name: ignored_physical_slot_name<br>
-		type: physical<br>
-	...
+&nbsp;&nbsp;- name: ignored_logical_slot_name<br>
+&nbsp;&nbsp;&nbsp;&nbsp;type: logical<br>
+&nbsp;&nbsp;&nbsp;&nbsp;database: my_db<br>
+&nbsp;&nbsp;&nbsp;&nbsp;plugin: test_decoding<br>
+&nbsp;&nbsp;- name: ignored_physical_slot_name<br>
+&nbsp;&nbsp;&nbsp;&nbsp;type: physical<br>
+&nbsp;&nbsp;...
 </th></tr></table><br>
 <b>7.2 全局/通用</b><br>
 • name : 主机名。对于集群必须是唯一的。<br>
@@ -71,22 +71,22 @@ ignore_slots:<br>
 • urllib3：DEBUG<br>
 <b>7.4 引导配置</b><br>
 • bootstrap：<br>
-	-dcs：在初始化一个集群后，将配置信息写入给定的配置存储 /<namespace>/<scope>/config 中。集群的全局动态配置。在 bootstrap.dcs 中可以设置动态配置中描述的任何参数，在用户初始化（引导）新集群后，它将把这个部分写入配置存储的/<namespace>/<scope>/config。所有以后的bootstrap.dcs 不会有任何效果！如果要更改它们，请使用patronictl edit-config或Patroni REST API<br>
-	-method：用于引导此集群的自定义脚本。有关详细信息，请参阅自定义引导程序方法文档。initdb指定何时恢复为默认initdb命令。initdb当method 配置文件中没有参数时也会触发。<br>
-	-initdb：列出要传递给 initdb 的选项。<br>
-		--data-checksums: 在9.3版本时使用pg_rewind，需要打开。<br>
-		--encoding: UTF8:默认新数据库的编码。<br>
-		--locale: UTF8: 新数据库的默认区域设置。<br>
-	-pg_hba：您应该添加到 pg_hba.conf 的行列表。<br>
-		--host all all 0.0.0.0/0 md5.<br>
-		--host replication replicator 127.0.0.1/32 md5: 复制所需要的。<br>
-	-users : 初始化新集群后需要创建的一些额外用户<br>
-		--admin : 用户名<br>
-		--password：zalando：<br>
-		--options : CREATE USER 语句的选项列表<br>
-			--- createrole<br>
-			--- createdb<br>
-			--- post_bootstrap或post_init：将在初始化集群后执行的附加脚本。该脚本接收一个连接字符串 URL（使用集群超级用户作为用户名）。PGPASSFILE 变量设置为 pgpass 文件的位置。<br>
+&nbsp;&nbsp;-dcs：在初始化一个集群后，将配置信息写入给定的配置存储 /<namespace>/<scope>/config 中。集群的全局动态配置。在 bootstrap.dcs 中可以设置动态配置中描述的任何参数，在用户初始化（引导）新集群后，它将把这个部分写入配置存储的/<namespace>/<scope>/config。所有以后的bootstrap.dcs 不会有任何效果！如果要更改它们，请使用patronictl edit-config或Patroni REST API<br>
+&nbsp;&nbsp;-method：用于引导此集群的自定义脚本。有关详细信息，请参阅自定义引导程序方法文档。initdb指定何时恢复为默认initdb命令。initdb当method 配置文件中没有参数时也会触发。<br>
+&nbsp;&nbsp;-initdb：列出要传递给 initdb 的选项。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;--data-checksums: 在9.3版本时使用pg_rewind，需要打开。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;--encoding: UTF8:默认新数据库的编码。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;--locale: UTF8: 新数据库的默认区域设置。<br>
+&nbsp;&nbsp;-pg_hba：您应该添加到 pg_hba.conf 的行列表。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;--host all all 0.0.0.0/0 md5.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;--host replication replicator 127.0.0.1/32 md5: 复制所需要的。<br>
+&nbsp;&nbsp;-users : 初始化新集群后需要创建的一些额外用户<br>
+&nbsp;&nbsp;&nbsp;&nbsp;--admin : 用户名<br>
+&nbsp;&nbsp;&nbsp;&nbsp;--password：zalando：<br>
+&nbsp;&nbsp;&nbsp;&nbsp;--options : CREATE USER 语句的选项列表<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--- createrole<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--- createdb<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--- post_bootstrap或post_init：将在初始化集群后执行的附加脚本。该脚本接收一个连接字符串 URL（使用集群超级用户作为用户名）。PGPASSFILE 变量设置为 pgpass 文件的位置。<br>
 <b>7.5 Consul</b><br>
 大多数参数是可选的，但您必须指定主机或网址之一<br>
 • host：Consul的本地代理，host:port。<br>
@@ -107,13 +107,13 @@ ignore_slots:<br>
 token需要有以下ACL权限：<br>
 <table border="1"><tr><th align="left">
 service_prefix "${scope}" {<br>
-	policy = "write"<br>
+&nbsp;&nbsp;policy = "write"<br>
 }<br>
 key_prefix "${namespace}/${scope}" {<br>
-	policy = "write"<br>
+&nbsp;&nbsp;policy = "write"<br>
 }<br>
 session_prefix "" {<br>
-	policy = "write"<br>
+&nbsp;&nbsp;policy = "write"<br>
 }
 </th></tr></table><br>
 <b>7.6 Etcd</b><br>
@@ -166,123 +166,123 @@ session_prefix "" {<br>
 • data_dir : 存放 Raft 日志和快照的目录。如果未指定，则使用当前工作目录。<br>
 • password：（可选）使用指定密码加密 Raft 流量，需要cryptographypython 模块。<br>
 关于 Raft 实现的简短常见问题解答<br>
-	问：如何列出所有提供共识的节点？<br>
-	答:syncobj_admin -conn host:port -status，其中host:port是一个集群节点的地址<br>
-	问：作为共识一部分的节点已经消失，我无法为其他节点重复使用相同的 IP。如何从共识中删除这个节点？<br>
-	答：syncobj_admin -conn host:port -remove host2:port2 ，其中 host2:port2就是你要移除的共识节点的地址。<br>
-	问：从哪里获得syncobj_admin实用程序？<br>
-	答: 和pysyncobj模块一起安装（python RAFT实现），是Patroni依赖。<br>
-	问：是否可以在不加入共识的情况下运行 Patroni 节点？<br>
-	答：是的，只需raft.self_addr从 Patroni 配置中注释掉或删除即可。<br>
-	问: Patroni 和 PostgreSQL 可以只在两个节点上运行吗？<br>
-	答：是的，你可以在第三个节点上运行patroni_raft_controller（没有 Patroni 和 PostgreSQL）。在这样的设置中，可以暂时失去一个节点而不会影响主节点。<br>
+&nbsp;&nbsp;问：如何列出所有提供共识的节点？<br>
+&nbsp;&nbsp;答:syncobj_admin -conn host:port -status，其中host:port是一个集群节点的地址<br>
+&nbsp;&nbsp;问：作为共识一部分的节点已经消失，我无法为其他节点重复使用相同的 IP。如何从共识中删除这个节点？<br>
+&nbsp;&nbsp;答：syncobj_admin -conn host:port -remove host2:port2 ，其中 host2:port2就是你要移除的共识节点的地址。<br>
+&nbsp;&nbsp;问：从哪里获得syncobj_admin实用程序？<br>
+&nbsp;&nbsp;答: 和pysyncobj模块一起安装（python RAFT实现），是Patroni依赖。<br>
+&nbsp;&nbsp;问：是否可以在不加入共识的情况下运行 Patroni 节点？<br>
+&nbsp;&nbsp;答：是的，只需raft.self_addr从 Patroni 配置中注释掉或删除即可。<br>
+&nbsp;&nbsp;问: Patroni 和 PostgreSQL 可以只在两个节点上运行吗？<br>
+&nbsp;&nbsp;答：是的，你可以在第三个节点上运行patroni_raft_controller（没有 Patroni 和 PostgreSQL）。在这样的设置中，可以暂时失去一个节点而不会影响主节点。<br>
 <b>7.12 PostgreSQL</b><br>
 • PostgreSQL：<br>
-	-uthentication：<br>
-		-- superuser：<br>
-			---username：超级用户的名称，在初始化（initdb）期间设置，稍后由 Patroni 用于连接到 postgres。<br>
-			---password : 超级用户的密码，在初始化 (initdb) 时设置。<br>
-			---sslmode：（可选）映射为sslmode连接参数，它允许客户端指定与服务器的 TLS 协商模式的类型。有关每种模式如何工作的更多信息，请访问PostgreSQL 文档。默认模式是prefer。<br>
-			---sslkey：（可选）映射为sslkey连接参数，该参数指定与客户端证书一起使用的密钥的位置。<br>
-			---sslpassword：（可选）映射为sslpassword连接参数, 它指定sslkey中指定的密钥密码。<br>
-			---sslcert：（可选）映射为sslcert连接参数，该参数指定客户端证书的位置。<br>
-			---sslrootcert：（可选）映射为sslrootcert连接参数，该参数指定包含客户端将用于验证服务器证书的一个或多个证书颁发机构 (CA) 证书的文件的位置。<br>
-			---sslcrl：（可选）映射为sslcrl连接参数，该参数指定包含证书吊销列表的文件的位置。客户端将拒绝连接到此列表中存在证书的任何服务器。<br>
-			---gssencmode：（可选）映射为gssencmode连接参数, 它决定是否以什么优先级与服务器协商安全的GSS TCP/IP连接。<br>
-			---channel_binding：（可选）映射为channel_binding连接参数，它控制客户端对通道绑定的使用。<br>
-		--replication：<br>
-			---username：复制用户名；用户将在初始化期间创建。副本将使用此用户通过流式复制访问主服务器<br>
-			---password：复制用户密码；用户将在初始化期间创建。<br>
-			---sslmode：（可选）映射为sslmode连接参数，它允许客户端指定与服务器的 TLS 协商模式的类型。有关每种模式如何工作的更多信息，请访问PostgreSQL 文档。默认模式是prefer。<br>
-			---sslkey：（可选）映射为sslkey连接参数，该参数指定与客户端证书一起使用的密钥的位置。<br>
-			---sslpassword：（可选）映射为sslpassword连接参数,指定sslkey中指定的密钥密码。<br>
-			---sslcert：（可选）映射为sslcert连接参数，该参数指定客户端证书的位置。<br>
-			---sslrootcert：（可选）映射为sslrootcert连接参数，该参数指定包含客户端将用于验证服务器证书的一个或多个证书颁发机构 (CA) 证书的文件的位置。<br>
-			---sslcrl：（可选）映射为sslcrl连接参数，该参数指定包含证书吊销列表的文件的位置。客户端将拒绝连接到此列表中存在证书的任何服务器。<br>
-			---gssencmode：（可选）映射为gssencmode连接参数,它决定是否以什么优先级与服务器协商安全的GSS TCP/IP连接。<br>
-			---channel_binding：（可选）映射为channel_binding连接参数，它控制客户端对通道绑定的使用。<br>
-		--rewind<br>
-			---username：使用pg_rewind的用户的用户名; 在postgres 11及以上版本初始化时创建用户，并授予所有必要的权限。<br>
-			---password：使用pg_rewind的用户的用户密码; 初始化时创建用户<br>
-			---sslmode：（可选）映射为sslmode连接参数，它允许客户端指定与服务器的 TLS 协商模式的类型。有关每种模式如何工作的更多信息，请访问PostgreSQL 文档。默认模式是prefer。<br>
-			---sslkey：（可选）映射为sslkey连接参数，该参数指定与客户端证书一起使用的密钥的位置。<br>
-			---sslpassword：（可选）映射为sslpassword连接参数,指定sslkey中指定密钥的密码<br>
-			---sslcert：（可选）映射为sslcert连接参数，该参数指定客户端证书的位置。<br>
-			---sslrootcert：（可选）映射为sslrootcert连接参数，该参数指定包含客户端将用于验证服务器证书的一个或多个证书颁发机构 (CA) 证书的文件的位置。<br>
-			---sslcrl：（可选）映射为sslcrl连接参数，该参数指定包含证书吊销列表的文件的位置。客户端将拒绝连接到此列表中存在证书的任何服务器。<br>
-			---gssencmode：（可选）映射为gssencmode连接参数,它决定是否以什么优先级与服务器协商安全的GSS TCP/IP连接<br>
-			---channel_binding：（可选）映射为channel_binding连接参数，它控制客户端对通道绑定的使用。<br>
-	-callbacks : 在某些操作上运行的回调脚本。Patroni 将传递操作、角色和集群名称。（请参阅 scripts/aws.py 作为如何编写它们的示例。）<br>
-		--on_reload：在触发配置重新加载时运行此脚本。<br>
-		--on_restart：当 postgres 重新启动时运行这个脚本（不改变角色）。<br>
-		--on_role_change：当 postgres 被提升或降级时运行这个脚本。<br>
-		--on_start：在 postgres 启动时运行此脚本。<br>
-		--on_stop：当 postgres 停止时运行这个脚本。<br>
-	-connect_address：IP 地址 + 端口，通过该端口可以从其他节点和应用程序访问 Postgres。<br>
+&nbsp;&nbsp;-uthentication：<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-- superuser：<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---username：超级用户的名称，在初始化（initdb）期间设置，稍后由 Patroni 用于连接到 postgres。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---password : 超级用户的密码，在初始化 (initdb) 时设置。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---sslmode：（可选）映射为sslmode连接参数，它允许客户端指定与服务器的 TLS 协商模式的类型。有关每种模式如何工作的更多信息，请访问PostgreSQL 文档。默认模式是prefer。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---sslkey：（可选）映射为sslkey连接参数，该参数指定与客户端证书一起使用的密钥的位置。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---sslpassword：（可选）映射为sslpassword连接参数, 它指定sslkey中指定的密钥密码。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---sslcert：（可选）映射为sslcert连接参数，该参数指定客户端证书的位置。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---sslrootcert：（可选）映射为sslrootcert连接参数，该参数指定包含客户端将用于验证服务器证书的一个或多个证书颁发机构 (CA) 证书的文件的位置。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---sslcrl：（可选）映射为sslcrl连接参数，该参数指定包含证书吊销列表的文件的位置。客户端将拒绝连接到此列表中存在证书的任何服务器。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---gssencmode：（可选）映射为gssencmode连接参数, 它决定是否以什么优先级与服务器协商安全的GSS TCP/IP连接。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---channel_binding：（可选）映射为channel_binding连接参数，它控制客户端对通道绑定的使用。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;--replication：<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---username：复制用户名；用户将在初始化期间创建。副本将使用此用户通过流式复制访问主服务器<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---password：复制用户密码；用户将在初始化期间创建。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---sslmode：（可选）映射为sslmode连接参数，它允许客户端指定与服务器的 TLS 协商模式的类型。有关每种模式如何工作的更多信息，请访问PostgreSQL 文档。默认模式是prefer。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---sslkey：（可选）映射为sslkey连接参数，该参数指定与客户端证书一起使用的密钥的位置。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---sslpassword：（可选）映射为sslpassword连接参数,指定sslkey中指定的密钥密码。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---sslcert：（可选）映射为sslcert连接参数，该参数指定客户端证书的位置。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---sslrootcert：（可选）映射为sslrootcert连接参数，该参数指定包含客户端将用于验证服务器证书的一个或多个证书颁发机构 (CA) 证书的文件的位置。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---sslcrl：（可选）映射为sslcrl连接参数，该参数指定包含证书吊销列表的文件的位置。客户端将拒绝连接到此列表中存在证书的任何服务器。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---gssencmode：（可选）映射为gssencmode连接参数,它决定是否以什么优先级与服务器协商安全的GSS TCP/IP连接。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---channel_binding：（可选）映射为channel_binding连接参数，它控制客户端对通道绑定的使用。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;--rewind<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---username：使用pg_rewind的用户的用户名; 在postgres 11及以上版本初始化时创建用户，并授予所有必要的权限。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---password：使用pg_rewind的用户的用户密码; 初始化时创建用户<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---sslmode：（可选）映射为sslmode连接参数，它允许客户端指定与服务器的 TLS 协商模式的类型。有关每种模式如何工作的更多信息，请访问PostgreSQL 文档。默认模式是prefer。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---sslkey：（可选）映射为sslkey连接参数，该参数指定与客户端证书一起使用的密钥的位置。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---sslpassword：（可选）映射为sslpassword连接参数,指定sslkey中指定密钥的密码<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---sslcert：（可选）映射为sslcert连接参数，该参数指定客户端证书的位置。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---sslrootcert：（可选）映射为sslrootcert连接参数，该参数指定包含客户端将用于验证服务器证书的一个或多个证书颁发机构 (CA) 证书的文件的位置。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---sslcrl：（可选）映射为sslcrl连接参数，该参数指定包含证书吊销列表的文件的位置。客户端将拒绝连接到此列表中存在证书的任何服务器。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---gssencmode：（可选）映射为gssencmode连接参数,它决定是否以什么优先级与服务器协商安全的GSS TCP/IP连接<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---channel_binding：（可选）映射为channel_binding连接参数，它控制客户端对通道绑定的使用。<br>
+&nbsp;&nbsp;-callbacks : 在某些操作上运行的回调脚本。Patroni 将传递操作、角色和集群名称。（请参阅 scripts/aws.py 作为如何编写它们的示例。）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;--on_reload：在触发配置重新加载时运行此脚本。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;--on_restart：当 postgres 重新启动时运行这个脚本（不改变角色）。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;--on_role_change：当 postgres 被提升或降级时运行这个脚本。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;--on_start：在 postgres 启动时运行此脚本。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;--on_stop：当 postgres 停止时运行这个脚本。<br>
+&nbsp;&nbsp;-connect_address：IP 地址 + 端口，通过该端口可以从其他节点和应用程序访问 Postgres。<br>
 • create_replica_methods：将Patroni节点转换为新副本的创建方法的有序列表。“basebackup”是默认方法；假定其他方法引用脚本，每个脚本都配置为自己的配置项。有关更多说明，请参见自定义副本创建方法文档。<br>
-	-data_dir : Postgres 数据目录的位置，可以是现有的，也可以是由 Patroni 初始化的。<br>
-	-config_dir : Postgres 配置目录的位置，默认为数据目录。必须可由 Patroni 写入。<br>
-	-bin_dir：PostgreSQL 二进制文件的路径（pg_ctl、pg_rewind、pg_basebackup、postgres）。默认值是一个空字符串，这意味着 PATH 环境变量将用于查找可执行文件。<br>
-	-listen：Postgres 监听的IP地址+ 端口号; 如果您正在使用流复制，则必须可以从群集中的其他节点进行访问。只要将端口号附加在最后一个冒号后面，即可使用多个逗号分隔的地址，即监听：127.0.0.1,127.0.0.2：5432。Patroni将使用此列表中的第一个地址建立与PostgreSQL节点的本地连接。<br>
-	-use_unix_socket：指定Patroni使用unix套接字连接到集群。默认为false。如果unix_socket_directories 被定义，如果Patroni将使用其中的第一个合适的值连接到集群，没有合适的选项，回退到tcp。如果 unix_socket_directories没有定义在 postgresql.parameters中, Patroni将假定应使用默认值，并从连接参数中省略host。<br>
-	-use_unix_socket_repl：指定 Patroni 应首选使用unix套接字进行复制用户集群连接。默认值为false。如果unix_socket_directories已定义，Patroni 将使用其中的第一个合适的值连接到集群，如果没有合适的值，则回退到 tcp。如果postgresql.parameters中没有指定unix_socket_directories，那么Patroni将假定应该使用默认值，并从连接参数中省略host。<br>
-	-pgpass : .pgpass密码文件的路径。Patroni 在执行 pg_basebackup、post_init 脚本之前以及在其他一些情况下创建这个文件。该位置必须可由 Patroni 写入。<br>
-	-recovery_conf：配置follower时写入recovery.conf 的附加配置设置。<br>
-	-custom_conf：可选定制的postgresql.conf 文件路径, 将用于代替postgresql.base.conf。该文件必须存在于所有群集节点上，并且可由PostgreSQL读取，并将包含在实际的postgresql.conf中。请注意，Patroni不会监视此文件的更改，也不会备份它。但是Patroni自己的配置工具仍然可以覆盖其设置-有关详细信息，请参见动态配置。 <br>
-	-parameters：Postgres 的配置设置列表。其中许多是复制工作所必需的。<br>
-	-pg_hba：Patroni 将用于生成pg_hba.conf. 此参数的优先级高于bootstrap.pg_hba。与动态配置一起，它简化了pg_hba.conf.<br>
-		-- host all all 0.0.0.0/0 md5.<br>
-		-- host replication replicator 127.0.0.1/32 md5: 复制需要这样一行代码。<br>
-	-pg_ident：Patroni 将用于生成pg_ident.conf. 与动态配置一起，它简化了pg_ident.conf.<br>
-		-- mapname1 systemname1 pguser1。<br>
-		-- mapname1 systemname2 pguser2。<br>
-	-pg_ctl_timeout : pg_ctl在启动，停止或重新启动时应等待多长时间。 默认值为60秒。<br>
-	-use_pg_rewind：尝试在先前领导者作为副本加入群集时在先前领导者上使用pg_rewind。<br>
-	-remove_data_directory_on_rewind_failure：如果这个选项打开，Patroni将移除PostgreSQL数据目录并重新创建副本。否则将尽量跟随一个新领导者，默认为false。<br>
-	-remove_data_directory_on_diverged_timelines：如果Patroni注意到时间线不同并且以前的主服务器无法从新的主服务器开始流式传输，则Patroni将删除PostgreSQL数据目录并重新创建副本。当无法使用pg_rewind时，此选项很有用。默认值是false。 <br>
-	-replica_method：对于除 basebackup 之外的每个 create_replica_methods，您将添加一个同名的配置部分。至少，这应该包括“命令”以及要执行的实际脚本的完整路径。其他配置参数将以“parameter=value”的形式传递给脚本。<br>
-	-pre_promote：在获得领导锁之后，但在副本提升之前，在故障转移期间执行的围栏脚本。如果脚本以非零代码退出，那么Patroni不会升级复制副本并从DCS中删除领导密钥 <br>
+&nbsp;&nbsp;-data_dir : Postgres 数据目录的位置，可以是现有的，也可以是由 Patroni 初始化的。<br>
+&nbsp;&nbsp;-config_dir : Postgres 配置目录的位置，默认为数据目录。必须可由 Patroni 写入。<br>
+&nbsp;&nbsp;-bin_dir：PostgreSQL 二进制文件的路径（pg_ctl、pg_rewind、pg_basebackup、postgres）。默认值是一个空字符串，这意味着 PATH 环境变量将用于查找可执行文件。<br>
+&nbsp;&nbsp;-listen：Postgres 监听的IP地址+ 端口号; 如果您正在使用流复制，则必须可以从群集中的其他节点进行访问。只要将端口号附加在最后一个冒号后面，即可使用多个逗号分隔的地址，即监听：127.0.0.1,127.0.0.2：5432。Patroni将使用此列表中的第一个地址建立与PostgreSQL节点的本地连接。<br>
+&nbsp;&nbsp;-use_unix_socket：指定Patroni使用unix套接字连接到集群。默认为false。如果unix_socket_directories 被定义，如果Patroni将使用其中的第一个合适的值连接到集群，没有合适的选项，回退到tcp。如果 unix_socket_directories没有定义在 postgresql.parameters中, Patroni将假定应使用默认值，并从连接参数中省略host。<br>
+&nbsp;&nbsp;-use_unix_socket_repl：指定 Patroni 应首选使用unix套接字进行复制用户集群连接。默认值为false。如果unix_socket_directories已定义，Patroni 将使用其中的第一个合适的值连接到集群，如果没有合适的值，则回退到 tcp。如果postgresql.parameters中没有指定unix_socket_directories，那么Patroni将假定应该使用默认值，并从连接参数中省略host。<br>
+&nbsp;&nbsp;-pgpass : .pgpass密码文件的路径。Patroni 在执行 pg_basebackup、post_init 脚本之前以及在其他一些情况下创建这个文件。该位置必须可由 Patroni 写入。<br>
+&nbsp;&nbsp;-recovery_conf：配置follower时写入recovery.conf 的附加配置设置。<br>
+&nbsp;&nbsp;-custom_conf：可选定制的postgresql.conf 文件路径, 将用于代替postgresql.base.conf。该文件必须存在于所有群集节点上，并且可由PostgreSQL读取，并将包含在实际的postgresql.conf中。请注意，Patroni不会监视此文件的更改，也不会备份它。但是Patroni自己的配置工具仍然可以覆盖其设置-有关详细信息，请参见动态配置。 <br>
+&nbsp;&nbsp;-parameters：Postgres 的配置设置列表。其中许多是复制工作所必需的。<br>
+&nbsp;&nbsp;-pg_hba：Patroni 将用于生成pg_hba.conf. 此参数的优先级高于bootstrap.pg_hba。与动态配置一起，它简化了pg_hba.conf.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-- host all all 0.0.0.0/0 md5.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-- host replication replicator 127.0.0.1/32 md5: 复制需要这样一行代码。<br>
+&nbsp;&nbsp;-pg_ident：Patroni 将用于生成pg_ident.conf. 与动态配置一起，它简化了pg_ident.conf.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-- mapname1 systemname1 pguser1。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-- mapname1 systemname2 pguser2。<br>
+&nbsp;&nbsp;-pg_ctl_timeout : pg_ctl在启动，停止或重新启动时应等待多长时间。 默认值为60秒。<br>
+&nbsp;&nbsp;-use_pg_rewind：尝试在先前领导者作为副本加入群集时在先前领导者上使用pg_rewind。<br>
+&nbsp;&nbsp;-remove_data_directory_on_rewind_failure：如果这个选项打开，Patroni将移除PostgreSQL数据目录并重新创建副本。否则将尽量跟随一个新领导者，默认为false。<br>
+&nbsp;&nbsp;-remove_data_directory_on_diverged_timelines：如果Patroni注意到时间线不同并且以前的主服务器无法从新的主服务器开始流式传输，则Patroni将删除PostgreSQL数据目录并重新创建副本。当无法使用pg_rewind时，此选项很有用。默认值是false。 <br>
+&nbsp;&nbsp;-replica_method：对于除 basebackup 之外的每个 create_replica_methods，您将添加一个同名的配置部分。至少，这应该包括“命令”以及要执行的实际脚本的完整路径。其他配置参数将以“parameter=value”的形式传递给脚本。<br>
+&nbsp;&nbsp;-pre_promote：在获得领导锁之后，但在副本提升之前，在故障转移期间执行的围栏脚本。如果脚本以非零代码退出，那么Patroni不会升级复制副本并从DCS中删除领导密钥 <br>
 <b>7.13 REST API</b><br>
 • restapi<br>
--connect_address：IP 地址（或主机名）和端口，用于访问 Patroni 的REST API. 集群的所有成员都必须能够连接到这个地址，所以除非 Patroni 设置是用于本地主机内部的演示，否则这个地址必须是非“localhost”或环回地址（即：“localhost”或“127.0 .0.1”）。它可以作为 HTTP 健康检查的端点（阅读下面关于“listen”REST API 参数的内容），也可以作为用户查询（直接或通过 REST API），以及领导人选举中集群成员进行的健康检查（例如，确定主节点是否仍在运行，或者是否有一个节点的 WAL 位置在执行查询的节点之前；等等）将connect_address放入DCS的成员键中，从而可以将成员名称转换为地址以连接到其REST API。<br>
--listen：Patroni 将为 REST API监听的IP 地址（或主机名）和端口 - 如上所述，还在参与节点之间提供相同的健康检查和集群消息传递。为 HAProxy（或任何其他能够执行 HTTP“OPTION”或“GET”检查的负载均衡器）提供健康检查信息。<br>
--authentication: (可选)<br>
---username : 基本验证的用户名，用于保护不安全的 REST API 端点。<br>
---password : 基本验证的密码，用于保护不安全的 REST API 端点。<br>
--certfile：（可选）：指定带有 PEM 格式证书的文件。如果未指定 certfile 或将其留空，则 API 服务器将在没有 SSL 的情况下工作。<br>
--keyfile：（可选）：指定具有 PEM 格式的密钥的文件。<br>
--keyfile_password：（可选）：指定用于解密密钥文件的密码。<br>
--cafile：（可选）：指定带有 CA_BUNDLE 的文件，其中包含在验证客户端证书时要使用的受信任 CA 的证书。<br>
--ciphers：（可选）：指定允许的密码套件（例如“ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES128-GCM-SHA256:!SSLv1:!SSLv2:!SSLv3:!TLSv1:!TLSv1.1”)<br>
--verify_client : (可选): none(默认),optional或required. 当noneREST API 不会检查客户端证书时。当required所有 REST API 调用都需要客户端证书时。当optional所有不安全的 REST API 端点都需要客户端证书时。当required使用时，如果证书签名验证成功，则客户端验证成功。对于optional客户端证书将只检查PUT，POST，PATCH，和DELETE请求。<br>
--allowlist：（可选）：指定允许调用不安全REST API端点的主机集。单个元素可以是主机名、IP地址或使用CIDR表示法的网络地址。默认情况下，将使用allow all。如果设置了allowlist或allowlist_include_members，则拒绝未包含的任何内容。<br>
--allowlist_include_members：（可选）：如果设置为true它允许从在 DCS 中注册的其他集群成员访问不安全的 REST API 端点（IP 地址或主机名取自成员api_url）。请注意，操作系统可能会使用不同的 IP 进行传出连接。<br>
--http_extra_headers：（可选）：HTTP 标头让 REST API 服务器通过 HTTP 响应传递附加信息。<br>
--https_extra_headers：（可选）：启用TLS后，HTTPS headers可以让REST API服务器通过HTTP响应传递其他信息。这还将传递http_extra_headers中设置的其他信息<br>
+&nbsp;&nbsp;-connect_address：IP 地址（或主机名）和端口，用于访问 Patroni 的REST API. 集群的所有成员都必须能够连接到这个地址，所以除非 Patroni 设置是用于本地主机内部的演示，否则这个地址必须是非“localhost”或环回地址（即：“localhost”或“127.0 .0.1”）。它可以作为 HTTP 健康检查的端点（阅读下面关于“listen”REST API 参数的内容），也可以作为用户查询（直接或通过 REST API），以及领导人选举中集群成员进行的健康检查（例如，确定主节点是否仍在运行，或者是否有一个节点的 WAL 位置在执行查询的节点之前；等等）将connect_address放入DCS的成员键中，从而可以将成员名称转换为地址以连接到其REST API。<br>
+&nbsp;&nbsp;-listen：Patroni 将为 REST API监听的IP 地址（或主机名）和端口 - 如上所述，还在参与节点之间提供相同的健康检查和集群消息传递。为 HAProxy（或任何其他能够执行 HTTP“OPTION”或“GET”检查的负载均衡器）提供健康检查信息。<br>
+&nbsp;&nbsp;-authentication: (可选)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;--username : 基本验证的用户名，用于保护不安全的 REST API 端点。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;--password : 基本验证的密码，用于保护不安全的 REST API 端点。<br>
+&nbsp;&nbsp;-certfile：（可选）：指定带有 PEM 格式证书的文件。如果未指定 certfile 或将其留空，则 API 服务器将在没有 SSL 的情况下工作。<br>
+&nbsp;&nbsp;-keyfile：（可选）：指定具有 PEM 格式的密钥的文件。<br>
+&nbsp;&nbsp;-keyfile_password：（可选）：指定用于解密密钥文件的密码。<br>
+&nbsp;&nbsp;-cafile：（可选）：指定带有 CA_BUNDLE 的文件，其中包含在验证客户端证书时要使用的受信任 CA 的证书。<br>
+&nbsp;&nbsp;-ciphers：（可选）：指定允许的密码套件（例如“ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES128-GCM-SHA256:!SSLv1:!SSLv2:!SSLv3:!TLSv1:!TLSv1.1”)<br>
+&nbsp;&nbsp;-verify_client : (可选): none(默认),optional或required. 当noneREST API 不会检查客户端证书时。当required所有 REST API 调用都需要客户端证书时。当optional所有不安全的 REST API 端点都需要客户端证书时。当required使用时，如果证书签名验证成功，则客户端验证成功。对于optional客户端证书将只检查PUT，POST，PATCH，和DELETE请求。<br>
+&nbsp;&nbsp;-allowlist：（可选）：指定允许调用不安全REST API端点的主机集。单个元素可以是主机名、IP地址或使用CIDR表示法的网络地址。默认情况下，将使用allow all。如果设置了allowlist或allowlist_include_members，则拒绝未包含的任何内容。<br>
+&nbsp;&nbsp;-allowlist_include_members：（可选）：如果设置为true它允许从在 DCS 中注册的其他集群成员访问不安全的 REST API 端点（IP 地址或主机名取自成员api_url）。请注意，操作系统可能会使用不同的 IP 进行传出连接。<br>
+&nbsp;&nbsp;-http_extra_headers：（可选）：HTTP 标头让 REST API 服务器通过 HTTP 响应传递附加信息。<br>
+&nbsp;&nbsp;-https_extra_headers：（可选）：启用TLS后，HTTPS headers可以让REST API服务器通过HTTP响应传递其他信息。这还将传递http_extra_headers中设置的其他信息<br>
 这是http_extra_headers和https_extra_headers 的示例：<br>
 <table border="1"><tr><th align="left">
 restapi:<br>
-	listen: <listen><br>
-	connect_address: <connect_address><br>
-	authentication:<br>
-		username: <username><br>
-		password: <password><br>
-	http_extra_headers:<br>
-		'X-Frame-Options': 'SAMEORIGIN'<br>
-		'X-XSS-Protection': '1; mode=block'<br>
-		'X-Content-Type-Options': 'nosniff'<br>
-	cafile: <ca file><br>
-	certfile: <cert><br>
-	keyfile: <key><br>
-	https_extra_headers:<br>
-		'Strict-Transport-Security': 'max-age=31536000; includeSubDomains'
+&nbsp;&nbsp;listen: &lt;listen&gt;<br>
+&nbsp;&nbsp;connect_address: &lt;connect_address&gt;<br>
+&nbsp;&nbsp;authentication:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;username: &lt;username&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;password: &lt;password&gt;<br>
+&nbsp;&nbsp;http_extra_headers:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;'X-Frame-Options': 'SAMEORIGIN'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;'X-XSS-Protection': '1; mode=block'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;'X-Content-Type-Options': 'nosniff'<br>
+&nbsp;&nbsp;cafile: &lt;ca file&gt;<br>
+&nbsp;&nbsp;certfile: &lt;cert&gt;<br>
+&nbsp;&nbsp;keyfile: &lt;key&gt;<br>
+&nbsp;&nbsp;https_extra_headers:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;'Strict-Transport-Security': 'max-age=31536000; includeSubDomains'
 </th></tr></table><br>
 <b>7.14 CTL</b><br>
 •ctl : （可选）<br>
--insecure : 允许连接到 REST API 而无需验证 SSL 证书。<br>
--cacert : 指定带有CA_BUNDLE文件的文件或带有受信任CA证书的目录，以在验证REST API SSL证书时使用。如果未提供，则patronictl将使用为REST API “cafile”参数提供的值。<br>
--certfile : 指定带有客户端证书的 PEM 格式的文件。如果没有提供，patronict将使用为 REST API“certfile”参数提供的值。<br>
--keyfile : 指定具有 PEM 格式的客户端密钥的文件。如果没有提供，patronictl将使用为 REST API “keyfile”参数提供的值。<br>
+&nbsp;&nbsp;-insecure : 允许连接到 REST API 而无需验证 SSL 证书。<br>
+&nbsp;&nbsp;-cacert : 指定带有CA_BUNDLE文件的文件或带有受信任CA证书的目录，以在验证REST API SSL证书时使用。如果未提供，则patronictl将使用为REST API “cafile”参数提供的值。<br>
+&nbsp;&nbsp;-certfile : 指定带有客户端证书的 PEM 格式的文件。如果没有提供，patronict将使用为 REST API“certfile”参数提供的值。<br>
+&nbsp;&nbsp;-keyfile : 指定具有 PEM 格式的客户端密钥的文件。如果没有提供，patronictl将使用为 REST API “keyfile”参数提供的值。<br>
 <b>7.15 Watchdog</b><br>
 •mode : off, automatic 或者required. 当设置为off ，那么watchdog禁用。当设置为automatic，WatchDog（如果有）将被使用，但如果没有则将被忽略<br>
 •device : watchdog设备的路径。默认为 /dev/watchdog.<br>
