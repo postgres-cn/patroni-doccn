@@ -285,10 +285,10 @@ $ curl -s http://localhost:8008/switchover -XPOST -d \<br>
 '{"leader":"postgresql0","scheduled_at":"2019-09-24T12:00+00"}'<br>
 Switchover scheduled
 </th></tr></table><br>
-根据情况，请求可能会以不同的 HTTP 状态代码和内容结束。 成功完成切换或故障转移后，将返回状态码 200。 如果成功安排了切换，Patroni 将返回 HTTP 状态代码 202。如果出现问题，将在响应正文中返回错误状态代码（400、412 或 503 之一）以及一些详细信息。 更多信息请查看patroni/api.py:do_POST_failover() 方法的源代码。
-• DELETE /switchover：删除计划切换
-POST /switchover 和POST /failover 端点被分别用于 patronictl switchover 和patronictl failover
- DELETE /switchover 用于 patronictl flush &lt;cluster-name&gt; switchover。
+根据情况，请求可能会以不同的 HTTP 状态代码和内容结束。 成功完成切换或故障转移后，将返回状态码 200。 如果成功安排了切换，Patroni 将返回 HTTP 状态代码 202。如果出现问题，将在响应正文中返回错误状态代码（400、412 或 503 之一）以及一些详细信息。 更多信息请查看patroni/api.py:do_POST_failover() 方法的源代码。<br>
+• DELETE /switchover：删除计划切换<br>
+POST /switchover 和POST /failover 端点被分别用于 patronictl switchover 和patronictl failover<br>
+ DELETE /switchover 用于 patronictl flush &lt;cluster-name&gt; switchover。<br>
 <b>3.6 重启端点</b><br>
 • POST /restart：您可以通过执行 POST /restart 调用在特定节点上重新启动 Postgres。 在 POST 请求的 JSON 正文中，可以选择指定一些重启条件：<br>
 &nbsp;&nbsp;– restart_pending：布尔值，如果设置为 true Patroni 将仅在重启挂起时重启 PostgreSQL，以便应用 PostgreSQL 配置中的一些更改。<br>
