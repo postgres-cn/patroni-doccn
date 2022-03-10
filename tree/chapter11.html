@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>patroni中文手册</title>
+</head>
+<body>
+<font size="38"><b>第11章 集群的暂停/恢复模式</font></b><br>
+<b>11.1目标</b><br>
+在某些情况下，Patroni 需要暂时退出集群管理，同时仍保留 DCS 中的集群状态。可能的用例是集群上的不常见活动，例如主要版本升级或损坏恢复。在这些活动中，节点经常因为 Patroni 不知道的原因启动和停止，一些节点甚至可以临时提升，违反了只运行一个主节点的假设。因此，Patroni 需要能够与正在运行的集群“分离”，在 Pacemaker 中实现等效的维护模式。<br>
+<b>11.2实施</b><br>
+当 Patroni 在暂停模式下运行时，它不会改变 PostgreSQL 的状态，但以下情况除外：<br>
+•对于每个节点，将有关集群的当前信息更新DCS中的member键中。如果member正在运行，这会导致 Patroni 在member节点上运行只读查询。<br>
+•对于带leader 锁的Postgres主节点，Patroni 更新锁。如果带有leader锁的节点不再是主节点（即手动降级），Patroni将释放锁，而不是将节点提升回主节点。<br>
+•允许进行计划外的手动重新启动，重新初始化和手动故障转移。 仅在指定要故障转移到的节点时，才允许进行手动故障转移。在暂停模式下，手动故障转移不需要运行中的主节点。<br>
+•如果Patroni检测到“并行”主，它会发出警告，但不会在没有leader锁的情况下降级主。<br>
+•如果集群中没有leader锁，则运行的master将获取该锁。如果有多个主节点，则第一个获得锁的主节点获胜。如果完全没有主，Patroni 不会尝试提升任何副本。此规则中有一个例外：如果由于旧主降级而不存在leader锁，那么只有升级请求中提到的候选节点可以获取leader锁。授予新的leader锁后（即手动升级从后），Patroni确保从上一个leader流式传输的副本将切换成新的主。<br>
+•当 Postgres 停止时，Patroni 不会尝试启动它。当 Patroni 停止时，它不会尝试停止它正在管理的 Postgres 实例。<br>
+<b>11.3用户指南</b><br>
+patronictl支持pause和resume命令。<br>
+还可以使用 {"pause": true/false/null}键发送 PATCH请求到 {namespace}/{cluster}/config <br>
+
+</body>
+</html>
