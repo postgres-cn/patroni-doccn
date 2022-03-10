@@ -3,8 +3,8 @@
 patroni中文手册<br/>
 译者：崔鹏 李鑫 孟令彬 李洋 赵文玉<br/>
 
-<a href='https://github.com/postgres-cn/patroni-doccn/blob/main/tree/chapter1.html'>第1章 介绍<a/><br/>
-<a href='https://github.com/postgres-cn/patroni-doccn/blob/main/tree/chapter2.html'>第2章 Patroni配置<a/><br/>
+<a href='https://postgres-cn.github.io/patroni-doccn/tree/chapter1.html'>第1章 介绍<a/><br/>
+<a href='https://postgres-cn.github.io/patroni-doccn/tree/chapter2.html'>第2章 Patroni配置<a/><br/>
 <a href='https://github.com/postgres-cn/patroni-doccn/blob/main/tree/chapter3.html'>第3章 Patroni REST API<a/><br/>
 <a href='https://github.com/postgres-cn/patroni-doccn/blob/main/tree/chapter4.html'>第4章 将独立设备转换为 Patroni 集群<a/><br/>
 <a href='https://github.com/postgres-cn/patroni-doccn/blob/main/tree/chapter5.html'>第5章 PostgreSQL 大版本升级<a/><br/>
