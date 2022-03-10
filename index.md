@@ -1,11 +1,3 @@
-如发现文中错误, 万望指出, 在此非常感谢Thanks。<br/>
-
-原创文章以及视频资料,欢迎大家转载(但请注明出处)。<br/>
-
-可以issue或微信(18045062285)与我联系, 看到后会尽快回复。<br/>
-
-![image](https://github.com/cuipengdba/pger/blob/main/images/cuipengwx.png)
-* * *
 ### patroni中文手册<br/>
 本项目用于patroni文档的中文翻译，当前应对版本为2.1.1<br/>
 译者：崔鹏 李鑫 孟令彬 李洋 赵文玉<br/>
